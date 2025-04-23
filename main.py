@@ -147,6 +147,30 @@ cat_entry.grid(row=1, column=1, padx=10, pady=10)
 
 # FUNCTIONS FOR BUTTONS
 
+# Update record
+def update_record():
+	# Grab the record number
+	selected = my_tree.focus()
+	# Update record
+	my_tree.item(selected, text="", values=(dt_entry.get(), dis_entry.get(), amt_entry.get(), cat_entry.get(),))
+
+	# Clear entry boxes
+	dt_entry.delete(0, END)
+	dis_entry.delete(0, END)
+	amt_entry.delete(0, END)
+	cat_entry.delete(0, END)
+	
+
+# Remove all records
+def remove_all():
+	for record in my_tree.get_children():
+		my_tree.delete(record)
+
+# Remove one record
+def remove_one():
+	x = my_tree.selection()[0]
+	my_tree.delete(x)
+
 # Clear entry boxes
 def clear_entries():
 	# Clear entry boxes
@@ -179,25 +203,25 @@ def select_record(e):
 button_frame = LabelFrame(root, text="Commands")
 button_frame.pack(fill="x", expand="yes", padx=20)
 
-update_button = Button(button_frame, text="Update Record")
+update_button = Button(button_frame, text="Update Record", command=update_record)
 update_button.grid(row=0, column=0, padx=10, pady=10)
 
 add_button = Button(button_frame, text="Add Record")
 add_button.grid(row=0, column=1, padx=10, pady=10)
 
-remove_all_button = Button(button_frame, text="Remove All Records")
+remove_all_button = Button(button_frame, text="Remove All Records", command=remove_all)
 remove_all_button.grid(row=0, column=2, padx=10, pady=10)
 
-remove_one_button = Button(button_frame, text="Remove One Selected")
+remove_one_button = Button(button_frame, text="Remove One Selected", command=remove_one)
 remove_one_button.grid(row=0, column=3, padx=10, pady=10)
 
 remove_many_button = Button(button_frame, text="Remove Many Selected", state='disabled')
 remove_many_button.grid(row=0, column=4, padx=10, pady=10)
 
-move_up_button = Button(button_frame, text="Move Up")
+move_up_button = Button(button_frame, text="Move Up", state='disabled')
 move_up_button.grid(row=0, column=5, padx=10, pady=10)
 
-move_down_button = Button(button_frame, text="Move Down")
+move_down_button = Button(button_frame, text="Move Down", state='disabled')
 move_down_button.grid(row=0, column=6, padx=10, pady=10)
 
 select_record_button = Button(button_frame, text="Clear Entry Boxes", command=clear_entries)
