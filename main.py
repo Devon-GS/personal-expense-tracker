@@ -2,36 +2,39 @@ import os
 import sqlite3
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from tkinter.filedialog import askopenfile
 import pandas as pd
 
-# START UP CHECKS
-db = 'database.db'
-
-if os.path.isfile(db) == False:
+# START UP PROCEDURE
+# Create Database
+def init_database():
 	# Connect to database    
-    con = sqlite3.connect('database.db')
-    c = con.cursor()
-    
-    # Add Bank Statement Data
-    c.execute(''' CREATE TABLE IF NOT EXISTS bankStatement (
-    				date TEXT,
-                    description TEXT,
-                    amount TEXT,
-                    catagory TEXT
-    			)
-         ''')
-    
-    # Create Income Table 
-    c.execute(''' CREATE TABLE IF NOT EXISTS income (
-    				date TEXT,
-                    description TEXT,
-                    amount TEXT
-    			)
-         ''')
-    
-    con.commit()
+	con = sqlite3.connect('database.db')
+	c = con.cursor()
 
+	# Add Bank Statement Data
+	c.execute(''' CREATE TABLE IF NOT EXISTS bankStatement (
+					date TEXT,
+					description TEXT,
+					amount TEXT,
+					catagory TEXT
+				)
+			''')
+
+	# Create Income Table 
+	c.execute(''' CREATE TABLE IF NOT EXISTS income (
+					date TEXT,
+					description TEXT,
+					amount TEXT
+				)
+			''')
+
+	con.commit()
+
+init_database()
+
+# Add data to database
 def query_database():
 	# Create a database or connect to one that exists
 	conn = sqlite3.connect('database.db')
@@ -39,7 +42,7 @@ def query_database():
 	# Create a cursor instance
 	c = conn.cursor()
 
-	c.execute("SELECT * FROM bankStatement")
+	c.execute("SELECT rowid, * FROM bankStatement")
 	records = c.fetchall()
 	
 	# Add our data to the screen
@@ -48,9 +51,9 @@ def query_database():
 
 	for record in records:
 		if count % 2 == 0:
-			my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3]), tags=('evenrow',))
+			my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4]), tags=('evenrow',))
 		else:
-			my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3]), tags=('oddrow',))
+			my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4]), tags=('oddrow',))
 		# increment counter
 		count += 1
 
@@ -100,19 +103,21 @@ my_tree.pack()
 tree_scroll.config(command=my_tree.yview)
 
 # Define Columns
-my_tree['columns'] = ("Date", "Discription", "Amount", "Catagory")
+my_tree['columns'] = ("ID", "Date", "Description", "Amount", "Catagory")
 
 # Format Columns
 my_tree.column("#0", width=0, stretch=NO)
+my_tree.column("ID", anchor=W, width=50)
 my_tree.column("Date", anchor=W, width=140)
-my_tree.column("Discription", anchor=W, width=140)
+my_tree.column("Description", anchor=W, width=140)
 my_tree.column("Amount", anchor=CENTER, width=100)
 my_tree.column("Catagory", anchor=CENTER, width=140)
 
 # Create Headings
 my_tree.heading("#0", text="", anchor=W)
+my_tree.heading("ID", text="ID", anchor=W)
 my_tree.heading("Date", text="Date", anchor=W)
-my_tree.heading("Discription", text="Discription", anchor=W)
+my_tree.heading("Description", text="Description", anchor=W)
 my_tree.heading("Amount", text="Amount", anchor=CENTER)
 my_tree.heading("Catagory", text="Catagory", anchor=CENTER)
 
@@ -125,65 +130,189 @@ my_tree.tag_configure('evenrow', background="lightblue")
 data_frame = LabelFrame(root, text="Record")
 data_frame.pack(fill="x", expand="yes", padx=20)
 
-dt_label = Label(data_frame, text="Date")
-dt_label.grid(row=0, column=0, padx=10, pady=10)
-dt_entry = Entry(data_frame)
-dt_entry.grid(row=0, column=1, padx=10, pady=10)
+id_label = Label(data_frame, text="ID")
+id_label.grid(row=0, column=0, padx=10, pady=10)
+id_entry = Entry(data_frame)
+id_entry.grid(row=0, column=1, padx=10, pady=10)
 
-dis_label = Label(data_frame, text="Discription")
-dis_label.grid(row=0, column=2, padx=10, pady=10)
-dis_entry = Entry(data_frame)
-dis_entry.grid(row=0, column=3, padx=10, pady=10)
+dt_label = Label(data_frame, text="Date")
+dt_label.grid(row=0, column=2, padx=10, pady=10)
+dt_entry = Entry(data_frame)
+dt_entry.grid(row=0, column=3, padx=10, pady=10)
+
+des_label = Label(data_frame, text="Description")
+des_label.grid(row=0, column=4, padx=10, pady=10)
+des_entry = Entry(data_frame)
+des_entry.grid(row=0, column=5, padx=10, pady=10)
 
 amt_label = Label(data_frame, text="Amount")
-amt_label.grid(row=0, column=4, padx=10, pady=10)
+amt_label.grid(row=0, column=6, padx=10, pady=10)
 amt_entry = Entry(data_frame)
-amt_entry.grid(row=0, column=5, padx=10, pady=10)
+amt_entry.grid(row=0, column=7, padx=10, pady=10)
 
 cat_label = Label(data_frame, text="Catagory")
 cat_label.grid(row=1, column=0, padx=10, pady=10)
-cat_entry = Entry(data_frame)
+# cat_entry = Entry(data_frame)
+# cat_entry.grid(row=1, column=1, padx=10, pady=10)
+
+n = StringVar()
+cat_entry = ttk.Combobox(data_frame, textvariable = n)
+# width = 27,
+
+def xxx ():
+	ff = (' January', ' February', ' March') 
+	return ff
+# Adding combobox drop down list 
+cat_entry['values'] = xxx()
 cat_entry.grid(row=1, column=1, padx=10, pady=10)
 
 # FUNCTIONS FOR BUTTONS
+
+def add_record():
+	# Create a database or connect to one that exists
+	conn = sqlite3.connect('database.db')
+
+	# Create a cursor instance
+	c = conn.cursor()
+
+	c.execute("INSERT INTO bankStatement VALUES (:date, :description, :amount, :catagory)",
+	{
+		'date' : dt_entry.get(),
+		'description' : des_entry.get(),
+		'amount' : amt_entry.get(),
+		'catagory' : cat_entry.get()
+	})
+
+	# Commit changes
+	conn.commit()
+
+	# Close our connection
+	conn.close()
+
+	# Clear entry boxes
+	dt_entry.delete(0, END)
+	des_entry.delete(0, END)
+	amt_entry.delete(0, END)
+	cat_entry.delete(0, END)
+
+	# Clear Tree View
+	my_tree.delete(*my_tree.get_children())
+
+	# Get data from database again
+	query_database()
 
 # Update record
 def update_record():
 	# Grab the record number
 	selected = my_tree.focus()
 	# Update record
-	my_tree.item(selected, text="", values=(dt_entry.get(), dis_entry.get(), amt_entry.get(), cat_entry.get(),))
+	my_tree.item(selected, text="", values=(id_entry.get(), dt_entry.get(), des_entry.get(), amt_entry.get(), cat_entry.get(),))
+
+	# Create a database or connect to one that exists
+	conn = sqlite3.connect('database.db')
+
+	# Create a cursor instance
+	c = conn.cursor()
+
+	c.execute('''UPDATE bankStatement SET
+		date = :date,
+		description = :description,
+		amount = :amount,
+		catagory = :catagory
+
+		WHERE oid = :oid''',
+		{
+			'date' : dt_entry.get(),
+			'description' : des_entry.get(),
+			'amount' : amt_entry.get(),
+			'catagory' : cat_entry.get(),
+			'oid' : id_entry.get()
+		})
+
+	# Commit changes
+	conn.commit()
+
+	# Close our connection
+	conn.close()
 
 	# Clear entry boxes
+	id_entry.delete(0, END)
 	dt_entry.delete(0, END)
-	dis_entry.delete(0, END)
+	des_entry.delete(0, END)
 	amt_entry.delete(0, END)
 	cat_entry.delete(0, END)
-	
-
-# Remove all records
-def remove_all():
-	for record in my_tree.get_children():
-		my_tree.delete(record)
 
 # Remove one record
 def remove_one():
 	x = my_tree.selection()[0]
 	my_tree.delete(x)
 
+	# Create a database or connect to one that exists
+	conn = sqlite3.connect('database.db')
+
+	# Create a cursor instance
+	c = conn.cursor()
+
+	c.execute("DELETE FROM bankStatement WHERE oid=" + id_entry.get())
+
+	# Commit changes
+	conn.commit()
+
+	# Close our connection
+	conn.close()
+
+	# Clear the entry boxes
+	clear_entries()
+
+	# Messagebox confirmation
+	messagebox.showinfo('Deleted!', 'Your Record Has Been Deleted')
+	
+# Remove all records
+def remove_all():
+	# Messagebox Warning
+	messagebox.showwarning('Delete Detected', 'YOU ARE ABOUT TO DELETE ALL RECORDS')
+
+	response = messagebox.askyesno('Delete Detected', 'Are you sure you want to delete ALL RECORDS?')
+
+	# Logic for message box
+	if response == 1:
+		for record in my_tree.get_children():
+			my_tree.delete(record)
+
+		# Create a database or connect to one that exists
+		conn = sqlite3.connect('database.db')
+
+		# Create a cursor instance
+		c = conn.cursor()
+
+		c.execute("DROP TABLE bankStatement")
+
+		# Commit changes
+		conn.commit()
+
+		# Close our connection
+		conn.close()
+
+		# Clear the entry boxes
+		clear_entries()
+
+		# Add back table to database
+		init_database()
+
 # Clear entry boxes
 def clear_entries():
 	# Clear entry boxes
 	dt_entry.delete(0, END)
-	dis_entry.delete(0, END)
+	des_entry.delete(0, END)
 	amt_entry.delete(0, END)
 	cat_entry.delete(0, END)
 
 # Select Record
 def select_record(e):
 	# Clear entry boxes
+	id_entry.delete(0, END)
 	dt_entry.delete(0, END)
-	dis_entry.delete(0, END)
+	des_entry.delete(0, END)
 	amt_entry.delete(0, END)
 	cat_entry.delete(0, END)
 
@@ -193,12 +322,12 @@ def select_record(e):
 	values = my_tree.item(selected, 'values')
 
 	# output to entry boxes
-	dt_entry.insert(0, values[0])
-	dis_entry.insert(0, values[1])
-	amt_entry.insert(0, values[2])
-	cat_entry.insert(0, values[3])
+	id_entry.insert(0, values[0])
+	dt_entry.insert(0, values[1])
+	des_entry.insert(0, values[2])
+	amt_entry.insert(0, values[3])
+	cat_entry.insert(0, values[4])
 	
-
 # Add Buttons
 button_frame = LabelFrame(root, text="Commands")
 button_frame.pack(fill="x", expand="yes", padx=20)
@@ -206,7 +335,7 @@ button_frame.pack(fill="x", expand="yes", padx=20)
 update_button = Button(button_frame, text="Update Record", command=update_record)
 update_button.grid(row=0, column=0, padx=10, pady=10)
 
-add_button = Button(button_frame, text="Add Record")
+add_button = Button(button_frame, text="Add Record", command=add_record)
 add_button.grid(row=0, column=1, padx=10, pady=10)
 
 remove_all_button = Button(button_frame, text="Remove All Records", command=remove_all)
@@ -256,8 +385,12 @@ my_tree.bind("<ButtonRelease-1>", select_record)
 
 # # UPLOAD BANK STATEMENT FOR PROCESSING 
 # catagory_list = ['income', 'entertainment expense', 'rates and taxes', 'fuel']
-
 # # statement = Askopenfile
+
+# ###############################################################################################
+# 					INITIAL DATABASE WITH TEST DATA
+# ###############################################################################################
+
 # statement = 'statement.csv'
 
 # df = pd.read_csv(statement).values.tolist()
@@ -281,6 +414,8 @@ my_tree.bind("<ButtonRelease-1>", select_record)
 #     c.execute(query, (x[0], x[1], x[2], 'Please Select') )
     
 # con.commit()
+
+# ###############################################################################################
 
 query_database()
 
