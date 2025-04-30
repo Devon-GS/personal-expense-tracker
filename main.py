@@ -1,10 +1,13 @@
+# from distutils import command
 import os
 import sqlite3
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfile
+from turtle import onclick
 import pandas as pd
+import catagory as c
 
 # START UP PROCEDURE
 # Create Database
@@ -13,7 +16,7 @@ def init_database():
 	con = sqlite3.connect('database.db')
 	c = con.cursor()
 
-	# Add Bank Statement Data
+	# Create Bank Statement Table
 	c.execute(''' CREATE TABLE IF NOT EXISTS bankStatement (
 					date TEXT,
 					description TEXT,
@@ -29,6 +32,18 @@ def init_database():
 					amount TEXT
 				)
 			''')
+
+	# Create Catagory Table and Insert Default Data
+	c.execute("CREATE TABLE IF NOT EXISTS catagory (catagory TEXT)")
+	
+	c.execute("SELECT * FROM catagory")
+	records = c.fetchall()
+
+	if len(records) == 0:
+		print('yes')
+		catagory_list = ['Income', 'Entertainment Expense', 'Rates and Taxes', 'Fuel']
+		for cat in catagory_list:
+				c.execute("INSERT INTO catagory VALUES (:catagory)", {'catagory' : cat})
 
 	con.commit()
 
@@ -65,7 +80,7 @@ def query_database():
 
 # PROGRAM
 root = Tk()
-root.title('')
+root.title('Income and Expense Tracker')
 # root.iconbitmap('')
 root.geometry("1000x500")
 
@@ -150,21 +165,19 @@ amt_label.grid(row=0, column=6, padx=10, pady=10)
 amt_entry = Entry(data_frame)
 amt_entry.grid(row=0, column=7, padx=10, pady=10)
 
+# Add catagoryto drop down
 cat_label = Label(data_frame, text="Catagory")
 cat_label.grid(row=1, column=0, padx=10, pady=10)
-# cat_entry = Entry(data_frame)
-# cat_entry.grid(row=1, column=1, padx=10, pady=10)
+
+def update_combobox_options():
+    options = c.get_cat_data()
+    cat_entry['values']= options
 
 n = StringVar()
-cat_entry = ttk.Combobox(data_frame, textvariable = n)
-# width = 27,
-
-def xxx ():
-	ff = (' January', ' February', ' March') 
-	return ff
-# Adding combobox drop down list 
-cat_entry['values'] = xxx()
+cat_entry = ttk.Combobox(data_frame, width = 18, textvariable = n, postcommand=update_combobox_options) 
 cat_entry.grid(row=1, column=1, padx=10, pady=10)
+
+# ===============================================================================
 
 # FUNCTIONS FOR BUTTONS
 
@@ -301,7 +314,7 @@ def remove_all():
 
 # Clear entry boxes
 def clear_entries():
-	# Clear entry boxes
+	id_entry.delete(0, END)
 	dt_entry.delete(0, END)
 	des_entry.delete(0, END)
 	amt_entry.delete(0, END)
@@ -310,6 +323,7 @@ def clear_entries():
 # Select Record
 def select_record(e):
 	# Clear entry boxes
+	id_entry.config(state="normal")
 	id_entry.delete(0, END)
 	dt_entry.delete(0, END)
 	des_entry.delete(0, END)
@@ -323,6 +337,7 @@ def select_record(e):
 
 	# output to entry boxes
 	id_entry.insert(0, values[0])
+	id_entry.config(state="readonly")
 	dt_entry.insert(0, values[1])
 	des_entry.insert(0, values[2])
 	amt_entry.insert(0, values[3])
@@ -350,11 +365,14 @@ remove_many_button.grid(row=0, column=4, padx=10, pady=10)
 move_up_button = Button(button_frame, text="Move Up", state='disabled')
 move_up_button.grid(row=0, column=5, padx=10, pady=10)
 
-move_down_button = Button(button_frame, text="Move Down", state='disabled')
+# move_down_button = Button(button_frame, text="Move Down", state='disabled')
+# move_down_button.grid(row=0, column=6, padx=10, pady=10)
+
+move_down_button = Button(button_frame, text="Catagory", command=c.cat_managment)
 move_down_button.grid(row=0, column=6, padx=10, pady=10)
 
-select_record_button = Button(button_frame, text="Clear Entry Boxes", command=clear_entries)
-select_record_button.grid(row=0, column=7, padx=10, pady=10)
+clear_record_button = Button(button_frame, text="Clear Entry Boxes", command=clear_entries)
+clear_record_button.grid(row=0, column=7, padx=10, pady=10)
 
 # Bind the treeview
 my_tree.bind("<ButtonRelease-1>", select_record)
@@ -384,7 +402,7 @@ my_tree.bind("<ButtonRelease-1>", select_record)
 
 
 # # UPLOAD BANK STATEMENT FOR PROCESSING 
-# catagory_list = ['income', 'entertainment expense', 'rates and taxes', 'fuel']
+
 # # statement = Askopenfile
 
 # ###############################################################################################
