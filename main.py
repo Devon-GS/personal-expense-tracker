@@ -177,8 +177,6 @@ n = StringVar()
 cat_entry = ttk.Combobox(data_frame, width = 18, textvariable = n, postcommand=update_combobox_options) 
 cat_entry.grid(row=1, column=1, padx=10, pady=10)
 
-# ===============================================================================
-
 # FUNCTIONS FOR BUTTONS
 
 def add_record():
