@@ -10,14 +10,14 @@ Follow these steps to get the Personal Expense Tracker up and running:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com
+   git clone https://github.com/Devon-GS/personal-expense-tracker.git
    cd Personal-Expense-Tracker
    ```
 
 2. **Run the Application:**
    - Execute `main.py` in your project directory.
    ```bash
-   python entrypoint.py
+   python main.py
    ```
 
 3. **Install Dependencies:**
@@ -57,7 +57,7 @@ Income and Expense Tracker with bank statement import in csv form. Allocate inco
 
 ## 🛠 Contributing
 
-We welcome contributions to improve and expand the Library Management System! If you have suggestions or improvements, feel free to fork the repository and submit a pull request.
+We welcome contributions to improve and expand the Personal Expense Tracker! If you have suggestions or improvements, feel free to fork the repository and submit a pull request.
 
 ## 📫 Contact
 
