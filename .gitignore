@@ -1,4 +1,7 @@
 /statement.csv
 /virt
 /database.db
+/database copy 2.db
 /notes
+/__pycache__
+/testing.py

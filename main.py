@@ -1,4 +1,4 @@
-# from distutils import command
+from distutils import command
 import os
 import sqlite3
 from tkinter import *
@@ -33,6 +33,16 @@ def init_database():
 				)
 			''')
 
+	# Create options table
+	c.execute("DROP TABLE options")
+	c.execute("CREATE TABLE IF NOT EXISTS options (id INTEGER, date INTEGER, amount INTEGER, description INTEGER)")
+	c.execute("INSERT INTO options VALUES (:id, :date, :amount, :description)",{
+				'id' : 0,
+		 		'date' : 0,
+		 		'amount': 0,
+		 		'description' : 0
+			})
+	
 	# Create Catagory Table and Insert Default Data
 	c.execute("CREATE TABLE IF NOT EXISTS catagory (catagory TEXT)")
 	
@@ -46,8 +56,6 @@ def init_database():
 				c.execute("INSERT INTO catagory VALUES (:catagory)", {'catagory' : cat})
 
 	con.commit()
-
-init_database()
 
 # Add data to database
 def query_database():
