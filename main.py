@@ -1,3 +1,5 @@
+# RENAME >> bank_statement.py
+
 from distutils import command
 import os
 import sqlite3
@@ -383,65 +385,7 @@ clear_record_button.grid(row=0, column=7, padx=10, pady=10)
 # Bind the treeview
 my_tree.bind("<ButtonRelease-1>", select_record)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # UPLOAD BANK STATEMENT FOR PROCESSING 
-
-# # statement = Askopenfile
-
-# ###############################################################################################
-# 					INITIAL DATABASE WITH TEST DATA
-# ###############################################################################################
-
-# statement = 'statement.csv'
-
-# df = pd.read_csv(statement).values.tolist()
-
-# # Connect to database    
-# con = sqlite3.connect('database.db')
-# c = con.cursor()
-    
-# # Add Bank Statement Data
-# query = ''' INSERT INTO bankStatement (
-#     				date,
-#                     description,
-#                     amount,
-#                     catagory
-#     			)
-#             VALUES
-#                 (?, ?, ?, ?)    
-#         '''
-
-# for x in df:
-#     c.execute(query, (x[0], x[1], x[2], 'Please Select') )
-    
-# con.commit()
-
-# ###############################################################################################
-
 query_database()
 
 # RUN PROGRAM
-root.mainloop()        
+root.mainloop()     

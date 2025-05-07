@@ -1,6 +1,9 @@
+# RENAME >> main.py
+
 import sqlite3
 from tkinter import *
 from tkinter import messagebox
+import bank_import as bi
 
 
 root= Tk()
@@ -11,14 +14,16 @@ menubar = Menu(root)
 root.config(menu=menubar)
 
 # Functions
-def hh():
+def xx():
     pass
 
 # Create menu options
 file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label='File', menu=file_menu)
-file_menu.add_command(label='Catagory', command=hh)
-file_menu.add_command(label='Bank Statments', command=hh)
+file_menu.add_command(label='Catagory', command=xx)
+file_menu.add_command(label='Add Bank Statments', command=bi.add_bank_csv)
+file_menu.add_command(label='Bank Statments', command=xx)
+# file_menu.add_command(label='Accounts', command=hh)
 
 # SELECT OPTIONS
 # SETUP
