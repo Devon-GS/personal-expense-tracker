@@ -1,12 +1,18 @@
+import os
 import sqlite3
 from tkinter import *
 from tkinter import messagebox
+import init_database as indata
 import category as cat
 import bank_import as bi
 import bank_statement as bs
 import accounts as acc
 
 
+# SETUP DATABASE
+indata.init_database()
+
+# PROGRAM
 root = Tk()
 root.title('')
 root.geometry('400x400')

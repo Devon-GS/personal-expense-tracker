@@ -31,10 +31,10 @@ Follow these steps to get the Personal Expense Tracker up and running:
 1. **Import Statments in CSV** 
    - Easily import your bank statements for sorting.
 
-## Features We Want To Implement 
-
 2. **Account Catagories** 
    - Place income and expenditure in to custom accounts.
+
+## Features We Want To Implement 
 
 3. **Auto Sorting** 
    - Make rules to auto sort regular income and expenditures to accounts.
