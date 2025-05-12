@@ -51,6 +51,9 @@ Follow these steps to get the Personal Expense Tracker up and running:
 7. **Graphs** 
    - Visual representation of incomes and expenditures.
 
+7. **Multiple Bank Accounts** 
+   - Ability to have multiple bank accounts eg.(Current, Credit Card, Savings, etc).
+
 ## 📖 Introduction
 
 Income and Expense Tracker with bank statement import in csv form. Allocate income and expenditure to custom accounts.

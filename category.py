@@ -5,9 +5,9 @@ from tkinter import messagebox
 
 def cat_managment():
     # PROGRAM
-    catagory = Tk()
-    catagory.title('Catagory Management')
-    catagory.geometry("1000x500")
+    category = Tk()
+    category.title('Category Management')
+    category.geometry("1000x500")
 
     # SETUP TREE VIEW
     # Add Some Style
@@ -28,7 +28,7 @@ def cat_managment():
     background=[('selected', "#347083")])
 
     # Create a Treeview Frame
-    tree_frame = Frame(catagory)
+    tree_frame = Frame(category)
     tree_frame.pack(pady=10)
 
     # Create a Treeview Scrollbar
@@ -43,23 +43,23 @@ def cat_managment():
     tree_scroll.config(command=my_tree.yview)
 
     # Define Columns
-    my_tree['columns'] = ("ID", "Catagory Description")
+    my_tree['columns'] = ("ID", "Category Description")
 
     # Format Columns
     my_tree.column("#0", width=0, stretch=NO)
     my_tree.column("ID", anchor=W, width=50)
-    my_tree.column("Catagory Description", anchor=W, width=140)
+    my_tree.column("Category Description", anchor=W, width=140)
 
     # Create Headings
     my_tree.heading("#0", text="", anchor=W)
     my_tree.heading("ID", text="ID", anchor=W)
-    my_tree.heading("Catagory Description", text="Catagory Description", anchor=W)
+    my_tree.heading("Category Description", text="Category Description", anchor=W)
 
     # Create Striped Row Tags
     my_tree.tag_configure('oddrow', background="white")
     my_tree.tag_configure('evenrow', background="lightblue")
 
-    # GET DATA FROM DATABASE CATAGORY
+    # GET DATA FROM DATABASE CATEGORY
     # Create a database or connect to one that exists
     conn = sqlite3.connect('database.db')
 
@@ -70,7 +70,7 @@ def cat_managment():
         # Create a cursor instance
         c = conn.cursor()
 
-        c.execute("SELECT rowid, * FROM catagory")
+        c.execute("SELECT rowid, * FROM category")
         records = c.fetchall()
         
         # Add our data to the screen
@@ -93,7 +93,7 @@ def cat_managment():
 
     # SETUP ENTRY BOXES AND BUTTONS
     # Add Record Entry Boxes
-    data_frame = LabelFrame(catagory, text="Record")
+    data_frame = LabelFrame(category, text="Record")
     data_frame.pack(fill="x", expand="yes", padx=20)
 
     id_label = Label(data_frame, text="ID")
@@ -101,7 +101,7 @@ def cat_managment():
     id_entry = Entry(data_frame)
     id_entry.grid(row=0, column=1, padx=10, pady=10)
 
-    cd_label = Label(data_frame, text="Catagory Description")
+    cd_label = Label(data_frame, text="Category Description")
     cd_label.grid(row=0, column=2, padx=10, pady=10)
     cd_entry = Entry(data_frame)
     cd_entry.grid(row=0, column=3, padx=10, pady=10)
@@ -121,9 +121,9 @@ def cat_managment():
         # Create a cursor instance
         c = conn.cursor()
 
-        c.execute('''UPDATE catagory SET catagory = :catagory WHERE oid = :oid''',
+        c.execute('''UPDATE category SET category = :category WHERE oid = :oid''',
             {
-                'catagory' : cd_entry.get(),
+                'category' : cd_entry.get().capitalize(),
                 'oid' : id_entry.get()
             })
 
@@ -145,7 +145,7 @@ def cat_managment():
         # Create a cursor instance
         c = conn.cursor()
 
-        c.execute("INSERT INTO catagory VALUES (:catagory)", {'catagory' : cd_entry.get()})
+        c.execute("INSERT INTO category VALUES (:category)", {'category' : cd_entry.get().capitalize()})
 
         # Commit changes
         conn.commit()
@@ -175,7 +175,7 @@ def cat_managment():
         # Create a cursor instance
         c = conn.cursor()
 
-        c.execute("DELETE FROM catagory WHERE oid=" + id_entry.get())
+        c.execute("DELETE FROM category WHERE oid=" + id_entry.get())
 
         # Commit changes
         conn.commit()
@@ -212,7 +212,7 @@ def cat_managment():
         cd_entry.insert(0, values[1])
 
     # Add Buttons
-    button_frame = LabelFrame(catagory, text="Commands")
+    button_frame = LabelFrame(category, text="Commands")
     button_frame.pack(fill="x", expand="yes", padx=20)
 
     update_button = Button(button_frame, text="Update Record", command=update_record)
@@ -221,7 +221,7 @@ def cat_managment():
     add_button = Button(button_frame, text="Add Record", command=add_record)
     add_button.grid(row=0, column=1, padx=10, pady=10)
 
-    # remove_all_button = Button(button_frame, text="Remove All Records", command=remove_all)
+    # remove_all_button = Button(button_frame, text="Remove All Records", command=remove_all) #link to category rules
     # remove_all_button.grid(row=0, column=2, padx=10, pady=10)
 
     remove_one_button = Button(button_frame, text="Remove One Selected", command=remove_one)
@@ -240,21 +240,21 @@ def cat_managment():
     query_database()
 
     # RUN PROGRAM
-    catagory.mainloop()  
+    category.mainloop()  
 
 def get_cat_data():
-    catagories = []
+    categories = []
     # Create a database or connect to one that exists
     conn = sqlite3.connect('database.db')
 
     # Create a cursor instance
     c = conn.cursor()
 
-    c.execute("SELECT * FROM catagory")
+    c.execute("SELECT * FROM category")
     records = c.fetchall()
 
     for cat in records:
-        catagories.append(cat[0])
+        categories.append(cat[0])
 
     # Commit changes
     conn.commit()
@@ -262,4 +262,4 @@ def get_cat_data():
     # Close our connection
     conn.close()    
 
-    return tuple(catagories)
+    return tuple(categories)

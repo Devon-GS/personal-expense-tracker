@@ -1,28 +1,26 @@
-# RENAME >> main.py
-
 import sqlite3
 from tkinter import *
 from tkinter import messagebox
+import category as cat
 import bank_import as bi
+import bank_statement as bs
+import accounts as acc
 
 
-root= Tk()
+root = Tk()
 root.title('')
 root.geometry('400x400')
 
 menubar = Menu(root)
 root.config(menu=menubar)
 
-# Functions
-def xx():
-    pass
-
 # Create menu options
 file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label='File', menu=file_menu)
-file_menu.add_command(label='Catagory', command=xx)
-file_menu.add_command(label='Add Bank Statments', command=bi.add_bank_csv)
-file_menu.add_command(label='Bank Statments', command=xx)
+file_menu.add_command(label='Category', command=cat.cat_managment)
+file_menu.add_command(label='Add Bank Statments', command=bi.add_bank_statement)
+file_menu.add_command(label='Bank Statments', command=bs.bank_statments)
+file_menu.add_command(label='Account Totals', command=acc.accounts_total)
 # file_menu.add_command(label='Accounts', command=hh)
 
 # SELECT OPTIONS
@@ -59,25 +57,28 @@ COLUMNS = {'A': 0,
 COLUMNS_LOOKUP = {v: k for k, v in COLUMNS.items()}
 
 # PROGRAM
+bs_frame = LabelFrame(root, text="CSV Bank Statement Setup")
+bs_frame.pack(fill="x", padx=20)
+
 # Explain Setup
-id_label = Label(root, text="Please State which colum the following is in using 'A, B, C, ETC'")
-id_label.grid(columnspan=2 , padx=10, pady=10)
+id_label = Label(bs_frame, text="Please State which column the following is in using 'A, B, C, ETC'")
+id_label.grid(columnspan=2 , padx=(5,5), pady=10)
 
 # Inputs
-date_label = Label(root, text="Date")
-date_label.grid(row=1, column=0, padx=10, pady=10)
-date_entry = Entry(root)
-date_entry.grid(row=1, column=1, padx=10, pady=10)
+date_label = Label(bs_frame, text="Date")
+date_label.grid(row=1, column=0, padx=10, pady=10, sticky=E)
+date_entry = Entry(bs_frame)
+date_entry.grid(row=1, column=1, padx=10, pady=10, sticky=W)
 
-amount_label = Label(root, text="Amount")
-amount_label.grid(row=2, column=0, padx=10, pady=10)
-amount_entry = Entry(root)
-amount_entry.grid(row=2, column=1, padx=10, pady=10)
+amount_label = Label(bs_frame, text="Amount")
+amount_label.grid(row=2, column=0, padx=10, pady=10, sticky=E)
+amount_entry = Entry(bs_frame)
+amount_entry.grid(row=2, column=1, padx=10, pady=10, sticky=W)
 
-description_label = Label(root, text="Description")
-description_label.grid(row=3, column=0, padx=10, pady=10)
-description_entry = Entry(root)
-description_entry.grid(row=3, column=1, padx=10, pady=10)
+description_label = Label(bs_frame, text="Description")
+description_label.grid(row=3, column=0, padx=10, pady=10, sticky=E)
+description_entry = Entry(bs_frame)
+description_entry.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
 # Functions
 # Dispaly current settings in entrys
@@ -138,8 +139,8 @@ def get_csv_options():
         messagebox.showinfo('SAVE', 'Nothing Happened')        
 
 # Buttons
-save_button = Button(root, text="Save", command=get_csv_options)
-save_button.grid(row=4, column=0, padx=10, pady=10)
+save_button = Button(bs_frame, text="Save", command=get_csv_options)
+save_button.grid(row=4, column=0, columnspan=2, padx=(10,20), pady=10, sticky=NSEW)
 
 # Run setup functions
 update_entry()

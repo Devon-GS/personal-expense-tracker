@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 from tkinter.filedialog import askopenfile
 
-def add_bank_csv():
+def add_bank_statement():
     # Get Data
 	con = sqlite3.connect('database.db')
 	c = con.cursor()
