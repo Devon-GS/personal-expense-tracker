@@ -48,8 +48,11 @@ def init_database():
 		records = c.fetchall()
 
 		if len(records) == 0:
-			category_list = ['Income', 'Entertainment Expense', 'Rates and Taxes', 'Fuel']
+			category_list = ['Income', 'Entertainment Expense', 'Rates and Taxes', 'Fuel', 'Delete']
 			for cat in category_list:
 					c.execute("INSERT INTO category VALUES (:category)", {'category' : cat})
+
+		# Create Rules Table
+		c.execute("CREATE TABLE IF NOT EXISTS categoryRules (ruleName TEXT, appliedTo TEXT, category TEXT)")
 
 		con.commit()

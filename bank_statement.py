@@ -8,6 +8,8 @@ from tkinter.filedialog import askopenfile
 from turtle import onclick
 import pandas as pd
 import category as c
+import accounts as acc
+import category_rules as cr
 import init_database as indata
 
 def bank_statments():
@@ -127,7 +129,7 @@ def bank_statments():
 	amt_entry = Entry(data_frame)
 	amt_entry.grid(row=0, column=7, padx=10, pady=10)
 
-	# Add categoryto drop down
+	# Add category to drop down
 	cat_label = Label(data_frame, text="Category")
 	cat_label.grid(row=1, column=0, padx=10, pady=10)
 
@@ -140,7 +142,6 @@ def bank_statments():
 	cat_entry.grid(row=1, column=1, padx=10, pady=10)
 
 	# FUNCTIONS FOR BUTTONS
-
 	def add_record():
 		# Create a database or connect to one that exists
 		conn = sqlite3.connect('database.db')
@@ -302,7 +303,36 @@ def bank_statments():
 		des_entry.insert(0, values[2])
 		amt_entry.insert(0, values[3])
 		cat_entry.insert(0, values[4])
-		
+
+	def add_rule():
+		top = Toplevel(root)
+		top.geometry("300x150")
+		top.title("Rule Name")
+
+		name_label = Label(top, text="Enter Rule Name:")
+		name_label.grid(row=0, column=0, padx=10, pady=10)
+		name_entry = Entry(top)
+		name_entry.grid(row=0, column=1, padx=10, pady=10)
+
+		def save():
+			rule_name = name_entry.get()
+			appliedTo = des_entry.get()
+			category = cat_entry.get()
+
+			cr.auto_add_rule(rule_name, appliedTo, category)
+
+			cr.auto_apply_rules()
+
+			# Clear Tree View
+			my_tree.delete(*my_tree.get_children())
+
+			query_database()
+
+			top.destroy()
+
+		save_button = Button(top, text="Save", command=save)
+		save_button.grid(row=2, column=0, padx=10, pady=10)
+
 	# Add Buttons
 	button_frame = LabelFrame(root, text="Commands")
 	button_frame.pack(fill="x", expand="yes", padx=20)
@@ -319,17 +349,14 @@ def bank_statments():
 	remove_one_button = Button(button_frame, text="Remove One Selected", command=remove_one)
 	remove_one_button.grid(row=0, column=3, padx=10, pady=10)
 
-	remove_many_button = Button(button_frame, text="Remove Many Selected", state='disabled')
-	remove_many_button.grid(row=0, column=4, padx=10, pady=10)
+	add_category_button = Button(button_frame, text="Add Rule",command=add_rule)
+	add_category_button.grid(row=0, column=4, padx=10, pady=10)
 
-	move_up_button = Button(button_frame, text="Accounts")
-	move_up_button.grid(row=0, column=5, padx=10, pady=10)
+	accounts_button = Button(button_frame, text="Accounts", command=acc.accounts_total)
+	accounts_button.grid(row=0, column=5, padx=10, pady=10)
 
-	# move_down_button = Button(button_frame, text="Move Down", state='disabled')
-	# move_down_button.grid(row=0, column=6, padx=10, pady=10)
-
-	move_down_button = Button(button_frame, text="Category", command=c.cat_managment)
-	move_down_button.grid(row=0, column=6, padx=10, pady=10)
+	category_button = Button(button_frame, text="Category", command=c.cat_managment)
+	category_button.grid(row=0, column=6, padx=10, pady=10)
 
 	clear_record_button = Button(button_frame, text="Clear Entry Boxes", command=clear_entries)
 	clear_record_button.grid(row=0, column=7, padx=10, pady=10)
@@ -337,6 +364,7 @@ def bank_statments():
 	# Bind the treeview
 	my_tree.bind("<ButtonRelease-1>", select_record)
 
+	# Get data and disply
 	query_database()
 
 	# RUN PROGRAM

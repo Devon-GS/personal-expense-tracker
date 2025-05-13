@@ -7,10 +7,14 @@ import category as cat
 import bank_import as bi
 import bank_statement as bs
 import accounts as acc
+import category_rules as cr
 
 
 # SETUP DATABASE
 indata.init_database()
+
+# SORT RULES
+cr.auto_apply_rules()
 
 # PROGRAM
 root = Tk()
@@ -24,6 +28,7 @@ root.config(menu=menubar)
 file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label='File', menu=file_menu)
 file_menu.add_command(label='Category', command=cat.cat_managment)
+file_menu.add_command(label='Category Rules', command=cr.category_rules)
 file_menu.add_command(label='Add Bank Statments', command=bi.add_bank_statement)
 file_menu.add_command(label='Bank Statments', command=bs.bank_statments)
 file_menu.add_command(label='Account Totals', command=acc.accounts_total)
