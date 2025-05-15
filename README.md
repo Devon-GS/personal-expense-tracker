@@ -28,9 +28,9 @@ Follow these steps to get the Personal Expense Tracker up and running:
 
 ## Features & Usage
 
-1. **Import Statements in CSV** 
+1. **Import Statements in CSV of OFX** 
    - Easily import your bank statements for sorting.
-
+  
 2. **Account Categories** 
    - Place income and expenditure in to custom accounts.
 

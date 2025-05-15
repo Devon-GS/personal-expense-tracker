@@ -271,7 +271,7 @@ def bank_statments():
 			clear_entries()
 
 			# Add back table to database
-			indata.init_database()
+			indata.init_database('reinit')
 
 	# Clear entry boxes
 	def clear_entries():

@@ -29,8 +29,8 @@ file_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label='File', menu=file_menu)
 file_menu.add_command(label='Category', command=cat.cat_managment)
 file_menu.add_command(label='Category Rules', command=cr.category_rules)
-file_menu.add_command(label='Add Bank Statments', command=bi.add_bank_statement)
-file_menu.add_command(label='Bank Statments', command=bs.bank_statments)
+file_menu.add_command(label='Import Bank Statements', command=bi.add_bank_statement)
+file_menu.add_command(label='Bank Statements', command=bs.bank_statments)
 file_menu.add_command(label='Account Totals', command=acc.accounts_total)
 # file_menu.add_command(label='Accounts', command=hh)
 
@@ -68,6 +68,50 @@ COLUMNS = {'A': 0,
 COLUMNS_LOOKUP = {v: k for k, v in COLUMNS.items()}
 
 # PROGRAM
+# OFX Frame
+def selected():
+    con = sqlite3.connect('database.db')
+    c = con.cursor()
+
+    query = "UPDATE ofxCsv SET selected = ? WHERE id = ?"
+
+    c.execute(query, (int(str(var.get())), 0))  
+
+    con.commit()
+    con.close()
+
+# Buttons
+ofx_frame = LabelFrame(root, text="OFX or CSV")
+ofx_frame.pack(fill="x", padx=20)
+
+choose_label = Label(ofx_frame, text="Date")
+choose_label.grid(row=1, column=0, padx=10, pady=10, sticky=E)
+
+var = IntVar()
+choose_csv = Radiobutton(ofx_frame, text="CSV", variable=var, value=1, command=selected)
+choose_csv.grid(row=1, column=0, padx=10, pady=10, sticky=E)
+choose_ofx = Radiobutton(ofx_frame, text="OFX", variable=var, value=2, command=selected)
+choose_ofx.grid(row=1, column=2, padx=10, pady=10, sticky=E)
+
+# Dispaly current settings in entrys
+def dispaly_choice(): 
+    con = sqlite3.connect('database.db')
+    c = con.cursor()
+
+    c.execute("SELECT selected FROM ofxCsv")
+    records = c.fetchall() 
+
+    select = records[0][0]
+
+    if select == 1:
+        choose_csv.invoke()
+    else:
+        choose_ofx.invoke()
+
+    con.commit()
+    con.close()
+
+# CSV Frame
 bs_frame = LabelFrame(root, text="CSV Bank Statement Setup")
 bs_frame.pack(fill="x", padx=20)
 
@@ -93,7 +137,7 @@ description_entry.grid(row=3, column=1, padx=10, pady=10, sticky=W)
 
 # Functions
 # Dispaly current settings in entrys
-def update_entry(): 
+def display_entry(): 
     con = sqlite3.connect('database.db')
     c = con.cursor()
 
@@ -140,7 +184,7 @@ def get_csv_options():
             date_entry.delete(0, END)
             amount_entry.delete(0, END)
             description_entry.delete(0, END)
-            update_entry()
+            display_entry()
 
             messagebox.showinfo('SAVED', 'Coulmns Have Been Saved Successfully!')
 
@@ -154,6 +198,7 @@ save_button = Button(bs_frame, text="Save", command=get_csv_options)
 save_button.grid(row=4, column=0, columnspan=2, padx=(10,20), pady=10, sticky=NSEW)
 
 # Run setup functions
-update_entry()
+display_entry()
+dispaly_choice()
 
 root.mainloop()
