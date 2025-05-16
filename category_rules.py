@@ -93,7 +93,7 @@ def category_rules():
 
 	# PROGRAM
 	acc_rules = Tk()
-	acc_rules.title('')
+	acc_rules.title('Category Rules')
 	acc_rules.geometry("1000x500")
 
 	# SETUP TREE VIEW
@@ -142,7 +142,7 @@ def category_rules():
 	# Create Headings
 	my_tree.heading("#0", text="", anchor=W)
 	my_tree.heading("ID", text="ID", anchor=W)
-	my_tree.heading("Rule Name", text="Ruke Name", anchor=W)
+	my_tree.heading("Rule Name", text="Rule Name", anchor=W)
 	my_tree.heading("Apply To", text="Apply To", anchor=W)
 	my_tree.heading("Category", text="Category", anchor=W)
 

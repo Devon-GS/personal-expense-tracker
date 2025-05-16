@@ -4,7 +4,7 @@ from tkinter import ttk
 
 def accounts_total():
     acc = Tk()
-    acc.title('')
+    acc.title('Account Totals')
     acc.geometry('500x300')
 
     conn = sqlite3.connect('database.db')

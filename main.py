@@ -18,7 +18,7 @@ cr.auto_apply_rules()
 
 # PROGRAM
 root = Tk()
-root.title('')
+root.title('Income and Expense Tracker')
 root.geometry('400x400')
 
 menubar = Menu(root)

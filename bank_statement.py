@@ -1,11 +1,10 @@
-from distutils import command
-import os
-import sqlite3
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfile
-from turtle import onclick
+from dateutil import parser
+import os
+import sqlite3
 import pandas as pd
 import category as c
 import accounts as acc
@@ -13,6 +12,16 @@ import category_rules as cr
 import init_database as indata
 
 def bank_statments():
+	# Date changer function
+	def date_changer(date, date_format=None):
+		try:
+			if date_format == 'display':
+				return str(parser.parse(date).strftime('%Y-%m-%d'))
+			else:
+				return parser.parse(date).strftime('%Y%m%d')
+		except OverflowError:
+			return date
+
 	# Add data to database
 	def query_database():
 		# Create a database or connect to one that exists
@@ -30,9 +39,9 @@ def bank_statments():
 
 		for record in records:
 			if count % 2 == 0:
-				my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4]), tags=('evenrow',))
+				my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], date_changer(record[1],'display'), record[2], record[3], record[4]), tags=('evenrow',))
 			else:
-				my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4]), tags=('oddrow',))
+				my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], date_changer(record[1],'display'), record[2], record[3], record[4]), tags=('oddrow',))
 			# increment counter
 			count += 1
 
@@ -44,7 +53,7 @@ def bank_statments():
 
 	# PROGRAM
 	root = Tk()
-	root.title('Income and Expense Tracker')
+	root.title('Bank Statement Management')
 	# root.iconbitmap('')
 	root.geometry("1000x500")
 
@@ -111,7 +120,7 @@ def bank_statments():
 
 	id_label = Label(data_frame, text="ID")
 	id_label.grid(row=0, column=0, padx=10, pady=10)
-	id_entry = Entry(data_frame)
+	id_entry = Entry(data_frame, state='readonly')
 	id_entry.grid(row=0, column=1, padx=10, pady=10)
 
 	dt_label = Label(data_frame, text="Date")
@@ -149,31 +158,46 @@ def bank_statments():
 		# Create a cursor instance
 		c = conn.cursor()
 
-		c.execute("INSERT INTO bankStatement VALUES (:date, :description, :amount, :category)",
-		{
-			'date' : dt_entry.get(),
-			'description' : des_entry.get(),
-			'amount' : amt_entry.get(),
-			'category' : cat_entry.get()
-		})
+		try:
+			# Check if all entrys are filled out
+			if dt_entry.get() == '' or des_entry.get() == '' or amt_entry.get() == '':
+				raise Exception("Sorry, Please fill out all information")
+			elif len(dt_entry.get()) < 8 or len(dt_entry.get()) > 10:
+				raise Exception("Date format YYYYMMDD or YYYY/MM/DD or DD/MM/YYYY")
 
-		# Commit changes
-		conn.commit()
+			# Check if catagory is fill out or leave default 
+			if cat_entry.get() == '':
+				cat = 'Please Select'
+			else:
+				cat = cat_entry.get()
 
-		# Close our connection
-		conn.close()
+			c.execute("INSERT INTO bankStatement VALUES (:date, :description, :amount, :category)",
+				{
+					'date' : date_changer(dt_entry.get()),
+					'description' : des_entry.get(),
+					'amount' : amt_entry.get(),
+					'category' : cat
+				})
 
-		# Clear entry boxes
-		dt_entry.delete(0, END)
-		des_entry.delete(0, END)
-		amt_entry.delete(0, END)
-		cat_entry.delete(0, END)
+			# Commit changes
+			conn.commit()
 
-		# Clear Tree View
-		my_tree.delete(*my_tree.get_children())
+			# Close our connection
+			conn.close()
 
-		# Get data from database again
-		query_database()
+			# Clear entry boxes
+			dt_entry.delete(0, END)
+			des_entry.delete(0, END)
+			amt_entry.delete(0, END)
+			cat_entry.delete(0, END)
+
+			# Clear Tree View
+			my_tree.delete(*my_tree.get_children())
+
+			# Get data from database again
+			query_database()
+		except Exception as error:
+			messagebox.showerror('ERROR', error)
 
 	# Update record
 	def update_record():
@@ -196,7 +220,7 @@ def bank_statments():
 
 			WHERE oid = :oid''',
 			{
-				'date' : dt_entry.get(),
+				'date' : date_changer(dt_entry.get()),
 				'description' : des_entry.get(),
 				'amount' : amt_entry.get(),
 				'category' : cat_entry.get(),
@@ -210,7 +234,9 @@ def bank_statments():
 		conn.close()
 
 		# Clear entry boxes
+		id_entry.config(state="normal")
 		id_entry.delete(0, END)
+		id_entry.config(state="readonly")
 		dt_entry.delete(0, END)
 		des_entry.delete(0, END)
 		amt_entry.delete(0, END)
@@ -275,7 +301,9 @@ def bank_statments():
 
 	# Clear entry boxes
 	def clear_entries():
+		id_entry.config(state="normal")
 		id_entry.delete(0, END)
+		id_entry.config(state="readonly")
 		dt_entry.delete(0, END)
 		des_entry.delete(0, END)
 		amt_entry.delete(0, END)

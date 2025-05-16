@@ -37,10 +37,10 @@ Follow these steps to get the Personal Expense Tracker up and running:
 3. **Auto Sorting** 
    - Make rules to auto sort regular income and expenditures to accounts.
 
-## Features We Want To Implement 
-
-4. **Custome Records (Transactions)** 
+4. **Custom Records (Transactions)** 
    - Add custom tranasction for items such as cash payments.
+
+## Features We Want To Implement 
 
 5. **Search Transactions** 
    - Be able to search for transactions.
