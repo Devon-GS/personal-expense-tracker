@@ -21,14 +21,6 @@ def init_database(reinit=None):
 					)
 				''')
 
-		# Create Income Table 
-		c.execute(''' CREATE TABLE IF NOT EXISTS income (
-						date TEXT,
-						description TEXT,
-						amount TEXT
-					)
-				''')
-
 		# Create options table
 		c.execute("CREATE TABLE IF NOT EXISTS options (id INTEGER, date INTEGER, amount INTEGER, description INTEGER)")
 		if reinit != 'reinit':
@@ -40,7 +32,7 @@ def init_database(reinit=None):
 				})
 		
 		# Create Category Table and Insert Default Data
-		c.execute("CREATE TABLE IF NOT EXISTS category (category TEXT)")
+		c.execute("CREATE TABLE IF NOT EXISTS category (category TEXT, budget TEXT)")
 		
 		c.execute("SELECT * FROM category")
 		records = c.fetchall()
@@ -48,7 +40,7 @@ def init_database(reinit=None):
 		if len(records) == 0:
 			category_list = ['Income', 'Entertainment Expense', 'Rates and Taxes', 'Fuel', 'Delete']
 			for cat in category_list:
-					c.execute("INSERT INTO category VALUES (:category)", {'category' : cat})
+					c.execute("INSERT INTO category VALUES (:category, :budget)", {'category' : cat, 'budget': 'None'})
 
 		# Create Rules Table
 		c.execute("CREATE TABLE IF NOT EXISTS categoryRules (ruleName TEXT, appliedTo TEXT, category TEXT)")

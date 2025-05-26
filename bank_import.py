@@ -101,3 +101,6 @@ def add_bank_statement():
 		
 	except IndexError:
 		messagebox.showerror('ERROR', 'Please Check That The Right Cloumns Are Selected In Options Menu')
+
+	except FileNotFoundError:
+		messagebox.showinfo('No File Selected', 'No Bank Statements Imported')
