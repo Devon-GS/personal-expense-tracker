@@ -1,6 +1,5 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-from turtle import width
 from options import Options
 from categories import Categories
 from category_rules import CategoryRules

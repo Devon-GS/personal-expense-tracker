@@ -16,25 +16,40 @@ class Accounts(Frame):
             c.execute("SELECT amount, category FROM bankStatement")
             bank_records = c.fetchall()
 
+            c.execute("SELECT * FROM category")
+            cat_records = c.fetchall()
+
             # Commit changes
             conn.commit()
-
-            # Close our connection
             conn.close()
 
             # Sort Category and Amounts
             if len(bank_records) > 0:
                 cat_total = {}
 
+                # Add from category
+                for x in cat_records:
+                    cat = x[0]
+                    budget = x[1]
+
+                    if "Please Select" not in cat_total.keys():
+                        cat_total["Please Select"] = [0.0]  
+                        cat_total["Please Select"].append('None')
+
+                    elif cat not in cat_total.keys():
+                        cat_total[cat] = [0.0]  
+                        cat_total[cat].append(budget)
+
+                # Add from bankstatements
                 for x in bank_records:
-                    if x[1] not in cat_total.keys():
-                        cat_total[x[1]] = 0.0
-                        cat_total[x[1]] += float(x[0])
-                    else:
-                        cat_total[x[1]] += float(x[0])
+                    amount = x[0]
+                    cat = x[1]
 
+                    cat_total[cat][0] += float(amount)
+                
+                # # Change name and order dict
                 cat_total['Uncategorised'] = cat_total.pop('Please Select')
-
+        
                 cat_total_sorted = dict(sorted(cat_total.items()))
 
                 # Add our data to the table
@@ -42,13 +57,29 @@ class Accounts(Frame):
                 count = 0
 
                 for key, value in cat_total_sorted.items():
-                    if value < 0.0:
-                        value = "{:.2f}".format(value*-1,)
+                    amount = value[0]
+                    budget = value[1]
 
-                    if count % 2 == 0:
-                        my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(value), 2)), tags=('evenrow',))
+                    # Format amount
+                    if amount < 0.0:
+                        amount = "{:.2f}".format(amount*-1,)
+
+                    # Check over/under/near
+                    if budget == 'None':
+                        budget = '-'
+                        over_under = '-'
+                    # elif amt >= (float(bud) - float(2000)) or amt <= bud:
+                        # if with in certain percent of budget
+                    elif float(amount) < float(budget) :
+                        over_under = 'Within'
                     else:
-                        my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(value), 2)), tags=('oddrow',))
+                        over_under = 'OVER'
+
+                    # Display Data In Table
+                    if count % 2 == 0:
+                        my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(amount), 2), budget, over_under), tags=('evenrow',))
+                    else:
+                        my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(amount), 2), budget, over_under), tags=('oddrow',))
                     # increment counter
                     count += 1
 
@@ -86,17 +117,21 @@ class Accounts(Frame):
         tree_scroll.config(command=my_tree.yview)
 
         # Define Columns
-        my_tree['columns'] = ("Category", "Total Amount")
+        my_tree['columns'] = ("Category", "Total Amount", "Category Budget", "Within / Over")
 
         # Format Columns
         my_tree.column("#0", width=0, stretch=NO)
         my_tree.column("Category", anchor=W, width=250)
         my_tree.column("Total Amount", anchor=W, width=140)
+        my_tree.column("Category Budget", anchor=W, width=140)
+        my_tree.column("Within / Over", anchor=W, width=140)
 
         # Create Headings
         my_tree.heading("#0", text="", anchor=W)
-        my_tree.heading("Category", text="ID", anchor=W)
+        my_tree.heading("Category", text="Category", anchor=W)
         my_tree.heading("Total Amount", text="Total Amount", anchor=W)
+        my_tree.heading("Category Budget", text="Category Budget", anchor=W)
+        my_tree.heading("Within / Over", text="Within / Over", anchor=W)
 
         # Create Striped Row Tags
         my_tree.tag_configure('oddrow', background="white")

@@ -4,7 +4,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
-
 class Categories(Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -49,7 +48,7 @@ class Categories(Frame):
         my_tree.column("#0", width=0, stretch=NO)
         my_tree.column("ID", anchor=W, width=50)
         my_tree.column("Category Description", anchor=W, width=140)
-        my_tree.column("Category Budget", anchor=W, width=50)
+        my_tree.column("Category Budget", anchor=W, width=140)
 
         # Create Headings
         my_tree.heading("#0", text="", anchor=W)
@@ -80,10 +79,14 @@ class Categories(Frame):
             count = 0
 
             for record in records:
+                budget = record[2]
+                if budget == 'None':
+                    budget = '-'
+
                 if count % 2 == 0:
-                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2]), tags=('evenrow',))
+                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], budget), tags=('evenrow',))
                 else:
-                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2]), tags=('oddrow',))
+                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], budget), tags=('oddrow',))
                 # increment counter
                 count += 1
 
@@ -122,8 +125,11 @@ class Categories(Frame):
                     raise Exception("Sorry, That Category Can Not Be Updated")
                    
                 # Check that buget is actually a number
-                int(bud_entry.get())
-                get_bud = bud_entry.get()
+                if bud_entry.get() == '' or bud_entry.get() == 'None':
+                    get_bud = 'None'
+                else:
+                    int(bud_entry.get())
+                    get_bud = bud_entry.get()
 
                 # Grab the record number
                 selected = my_tree.focus()
@@ -138,7 +144,7 @@ class Categories(Frame):
                 c = conn.cursor()
 
                 c.execute("UPDATE category SET category = :category, budget = :budget WHERE oid = :oid", {
-                            'category' : cd_entry.get().capitalize(),
+                            'category' : cd_entry.get().title(),
                             'budget' : get_bud,
                             'oid' : id_entry.get()
                         })
@@ -155,6 +161,13 @@ class Categories(Frame):
                 id_entry.config(state="readonly")
                 cd_entry.delete(0, END)
                 bud_entry.delete(0, END)
+
+                # Clear Tree View
+                my_tree.delete(*my_tree.get_children())
+
+                # Get data from database again
+                query_database()
+                get_cat_data()
             
             except ValueError as error:
                     messagebox.showerror('ERROR', 'Budget Must Be Integer')
@@ -183,7 +196,7 @@ class Categories(Frame):
                 c = conn.cursor()
 
                 c.execute("INSERT INTO category VALUES (:category, :budget)", {
-                            'category' : cd_entry.get().capitalize(), 
+                            'category' : cd_entry.get().title(), 
                             'budget' : get_bud
                         })
 
@@ -277,14 +290,8 @@ class Categories(Frame):
         add_button = Button(button_frame, text="Add Record", command=add_record)
         add_button.grid(row=0, column=1, padx=10, pady=10)
 
-        # remove_all_button = Button(button_frame, text="Remove All Records", command=remove_all) #link to category rules
-        # remove_all_button.grid(row=0, column=2, padx=10, pady=10)
-
         remove_one_button = Button(button_frame, text="Remove One Selected", command=remove_one)
         remove_one_button.grid(row=0, column=3, padx=10, pady=10)
-
-        remove_many_button = Button(button_frame, text="Remove Many Selected", state='disabled')
-        remove_many_button.grid(row=0, column=4, padx=10, pady=10)
 
         clear_record_button = Button(button_frame, text="Clear Entry Boxes", command=clear_entries)
         clear_record_button.grid(row=0, column=7, padx=10, pady=10)

@@ -40,18 +40,18 @@ Follow these steps to get the Personal Expense Tracker up and running:
 4. **Custom Records (Transactions)** 
    - Add custom tranasction for items such as cash payments.
 
+5. **Budgeting** 
+   - Be able to create budget for accounts and warning when near and over the budget for the account.
+
 ## Features We Want To Implement 
 
-5. **Search Transactions** 
+6. **Search Transactions** 
    - Be able to search for transactions.
-
-6. **Budgeting** 
-   - Be able to create budget for accounts and warning when near and over the budget for the account.
 
 7. **Graphs** 
    - Visual representation of incomes and expenditures.
 
-7. **Multiple Bank Accounts** 
+8. **Multiple Bank Accounts** 
    - Ability to have multiple bank accounts eg.(Current, Credit Card, Savings, etc).
 
 ## 📖 Introduction
