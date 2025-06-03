@@ -10,11 +10,8 @@ class Options(Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        # SETUP DATABASE
-        indata.init_database()
-
         # SORT RULES
-        auto_apply_rules()
+        # auto_apply_rules()
 
         # SELECT OPTIONS
         # SETUP
@@ -50,7 +47,12 @@ class Options(Frame):
         COLUMNS_LOOKUP = {v: k for k, v in COLUMNS.items()}
 
         # PROGRAM
-        # OFX Frame
+
+        # #########################################################################################
+        # OFX FRAME
+        # #########################################################################################
+
+        # OFX FRAME
         def selected():
             con = sqlite3.connect('database.db')
             c = con.cursor()
@@ -65,7 +67,7 @@ class Options(Frame):
         # Buttons
         ofx_frame = LabelFrame(self, text="OFX or CSV")
         # ofx_frame.pack(fill="x", padx=20)
-        ofx_frame.pack(padx=20, pady=(20, 50))
+        ofx_frame.pack(padx=20, pady=(20, 50), side='left')
 
         choose_label = Label(ofx_frame, text="Date")
         choose_label.grid(row=1, column=0, padx=10, pady=10, sticky=E)
@@ -94,10 +96,14 @@ class Options(Frame):
             con.commit()
             con.close()
 
-        # CSV Frame
+        # #########################################################################################
+        # CSV FRAME
+        # #########################################################################################
+
+        # CSV FRAME
         bs_frame = LabelFrame(self, text="CSV Bank Statement Setup")
         # bs_frame.pack(fill="x", padx=20)
-        bs_frame.pack(padx=20, pady=(0,0))
+        bs_frame.pack(padx=20, pady=(0,0), side='left')
 
         # Explain Setup
         id_label = Label(bs_frame, text="Please State which column the following is in using 'A, B, C, ETC'")
@@ -177,9 +183,45 @@ class Options(Frame):
             else:
                 messagebox.showinfo('SAVE', 'Nothing Happened')        
 
-        # Buttons
+        # Button
         save_button = Button(bs_frame, text="Save", command=get_csv_options)
         save_button.grid(row=4, column=0, columnspan=2, padx=(10,20), pady=10, sticky=NSEW)
+
+        # #########################################################################################
+        # BANK ACCOUNT FRAME
+        # #########################################################################################
+        
+		# BANK ACCOUNT FRAME
+        bank_frame = LabelFrame(self, text="Add Bank Account")
+        bank_frame.pack(padx=20, pady=(20, 50), side='left')
+        
+        name_label = Label(bank_frame, text="Bank Account Name")
+        name_label.grid(row=1, column=0, padx=10, pady=10, sticky=E)
+        name_entry = Entry(bank_frame)
+        name_entry.grid(row=1, column=1, padx=10, pady=10, sticky=W)
+        
+		# Add Bank Accounts
+        def create_bank_accounts():
+            con = sqlite3.connect('database.db')
+            c = con.cursor()
+            
+            name = name_entry.get().lower()
+            
+            sql_acc_name = name.title().replace(' ', '').replace(name[0], name[0].lower())
+            c.execute(f"INSERT INTO bankAccounts VALUES (:accounts)",{'accounts' : sql_acc_name})
+                        
+            con.commit()
+            con.close()
+            
+			# Clear entry boxes
+            name_entry.delete(0, END)
+            
+			# Refresh Database
+            indata.init_database('reinit') 
+        
+		# Add Button
+        add_button = Button(bank_frame, text="Add", command=create_bank_accounts)
+        add_button.grid(row=4, column=0, columnspan=2, padx=(10,20), pady=10, sticky=NSEW)
 
         # Run setup functions
         display_entry()
