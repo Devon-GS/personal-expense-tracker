@@ -7,13 +7,13 @@ from tkinter import messagebox
 from category_rules import auto_apply_rules
 
 
-def add_bank_statement(account_name):
+def add_bank_statement():
 	# Get Data
 	con = sqlite3.connect('database.db')
 	c = con.cursor()
 
 	# Get current records from bank Statements in database
-	c.execute(f"SELECT * FROM {account_name}")
+	c.execute("SELECT * FROM bankStatement")
 	b_records = c.fetchall()
 
 	# Convert current transactions to list
@@ -50,7 +50,7 @@ def add_bank_statement(account_name):
 				new_trans.append([str(x[0]), " ".join(str(x[1]).split()), str("{:.2f}".format(x[2]))])
 
 			# Query to insert new tranactions 
-			query = f"INSERT INTO {account_name} VALUES (?, ?, ?, ?)"
+			query = "INSERT INTO banKStatement VALUES (?, ?, ?, ?)"
 				
 			# Filter out duplicate transactions and add to database:
 			for x in new_trans:
@@ -84,7 +84,7 @@ def add_bank_statement(account_name):
 
 				new_trans.append([str(date), " ".join(str(description).split()), str("{:.2f}".format(amount))])
 
-			query = f"INSERT INTO {account_name} VALUES (?, ?, ?, ?)"
+			query = "INSERT INTO banKStatement VALUES (?, ?, ?, ?)"
 
 			# Filter out duplicate transactions and add to database:
 			for x in new_trans:

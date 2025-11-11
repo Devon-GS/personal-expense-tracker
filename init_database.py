@@ -20,7 +20,7 @@ def init_database(reinit=None):
 						category TEXT
 					)
 				''')
-		
+
 		# Create options table
 		c.execute("CREATE TABLE IF NOT EXISTS options (id INTEGER, date INTEGER, amount INTEGER, description INTEGER)")
 		if reinit != 'reinit':
@@ -43,28 +43,12 @@ def init_database(reinit=None):
 					c.execute("INSERT INTO category VALUES (:category, :budget)", {'category' : cat, 'budget': 'None'})
 
 		# Create Rules Table
-		c.execute("CREATE TABLE IF NOT EXISTS categoryRules (ruleName TEXT, appliedTo TEXT, category TEXT, bankAcc TEXT)")
+		c.execute("CREATE TABLE IF NOT EXISTS categoryRules (ruleName TEXT, appliedTo TEXT, category TEXT)")
 
 		# Create CSV or OFX Table
 		c.execute("CREATE TABLE IF NOT EXISTS ofxCsv (id INTEGER, selected INTEGER)")
 		if reinit != 'reinit':
 			c.execute("INSERT INTO ofxCsv VALUES (:id, :selected)", {'id': 0, 'selected' : 0})
-
-		# Create Bank Account Table
-		c.execute("CREATE TABLE IF NOT EXISTS bankAccounts (accounts TEXT)")
-
-		c.execute("SELECT accounts FROM bankAccounts")
-		bank_name_records = c.fetchall()
-
-		for x in bank_name_records:
-			bank_acc_name = x[0]
-			c.execute(f''' CREATE TABLE IF NOT EXISTS {bank_acc_name} (
-						date TEXT,
-						description TEXT,
-						amount TEXT,
-						category TEXT
-					)
-				''')
 
 		con.commit()
 		con.close()

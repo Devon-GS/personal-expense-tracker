@@ -8,53 +8,40 @@ import init_database as indata
 
 def auto_apply_rules():
     cr_list = []
-    
+    bs_list = []
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
 
-    c.execute("SELECT appliedTo, category, bankAcc FROM categoryRules")
+    c.execute("SELECT appliedTo, category FROM categoryRules")
     cr_records = c.fetchall()
 
-    # Get Accounts and put in list
-    account_name_list = []
+    c.execute("SELECT description, category FROM bankStatement")
+    bs_records = c.fetchall()
 
-    c.execute("SELECT * FROM bankAccounts")
-    ba_records = c.fetchall()
+    # Add to lists
+    for x in cr_records:
+        cr_list.append([x[0], x[1]])
 
-    for x in ba_records:
-        account_name_list.append(x[0]) 
+    for x in bs_records:
+        pass
+        bs_list.append([x[0], x[1]])
 
-    # Update Rules On Bank Statement
-    for x in account_name_list:
-        account_name = x
-        bs_list = []
+    for bs in bs_list:
+        for cr in cr_list:
+            if bs[1] == 'Delete':
+                query = ("DELETE FROM bankStatement WHERE description = ?")
+                c.execute(query, (bs[0],))
+    
+            elif cr[0] == bs[0] and bs[1] == 'Please Select':
+                query = ("UPDATE bankStatement SET category = ? WHERE description = ?")
 
-        c.execute(f"SELECT description, category FROM {account_name}")
-        bs_records = c.fetchall()
-
-        # Add to lists
-        for x in cr_records:
-            cr_list.append([x[0], x[1]])
-
-        for x in bs_records:
-            bs_list.append([x[0], x[1]])
-
-        for bs in bs_list:
-            for cr in cr_list:
-                if bs[1] == 'Delete':
-                    query = (f"DELETE FROM {account_name} WHERE description = ?")
-                    c.execute(query, (bs[0],))
-        
-                elif cr[0] == bs[0] and bs[1] == 'Please Select':
-                    query = (f"UPDATE {account_name} SET category = ? WHERE description = ?")
-
-                    c.execute(query, (cr[1], bs[0]))
-       
+                c.execute(query, (cr[1], bs[0]))
+                
     # Commit changes
     conn.commit()
     conn.close()
 
-def auto_add_rule(rule_name, apply, category, account_name):
+def auto_add_rule(rule_name, apply, category):
     if category == 'Please Select':
         messagebox.showwarning('Category', 'Please Select A Category For The Rule')
     else:
@@ -62,12 +49,11 @@ def auto_add_rule(rule_name, apply, category, account_name):
         conn = sqlite3.connect('database.db')
         c = conn.cursor()
 
-        c.execute("INSERT INTO categoryRules VALUES (:ruleName, :appliedTo, :category, :bankAcc)",
+        c.execute("INSERT INTO categoryRules VALUES (:ruleName, :appliedTo, :category)",
         {
             'ruleName' : rule_name,
             'appliedTo' : apply,
-            'category' : category,
-            'bankAcc' : account_name
+            'category' : category
         })
 
         # Commit changes
@@ -96,9 +82,9 @@ class CategoryRules(Frame):
 
             for record in records:
                 if count % 2 == 0:
-                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4]), tags=('evenrow',))
+                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3]), tags=('evenrow',))
                 else:
-                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3], record[4]), tags=('oddrow',))
+                    my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], record[1], record[2], record[3]), tags=('oddrow',))
                 # increment counter
                 count += 1
 
@@ -107,15 +93,6 @@ class CategoryRules(Frame):
 
             # Close our connection
             conn.close()
-
-        global refresh_cr
-        def refresh_cr():
-            # Clear Tree View
-            my_tree.delete(*my_tree.get_children())
-
-            # Get data from database again
-            query_database()
-
 
         # SETUP TREE VIEW
         # Add Some Style
@@ -151,7 +128,7 @@ class CategoryRules(Frame):
         tree_scroll.config(command=my_tree.yview)
 
         # Define Columns
-        my_tree['columns'] = ("ID", "Rule Name", "Apply To", "Category", "Bank Account")
+        my_tree['columns'] = ("ID", "Rule Name", "Apply To", "Category")
 
         # Format Columns
         my_tree.column("#0", width=0, stretch=NO)
@@ -159,7 +136,6 @@ class CategoryRules(Frame):
         my_tree.column("Rule Name", anchor=W, width=140)
         my_tree.column("Apply To", anchor=W, width=140)
         my_tree.column("Category", anchor=W, width=140)
-        my_tree.column("Bank Account", anchor=W, width=140)
 
         # Create Headings
         my_tree.heading("#0", text="", anchor=W)
@@ -167,7 +143,6 @@ class CategoryRules(Frame):
         my_tree.heading("Rule Name", text="Rule Name", anchor=W)
         my_tree.heading("Apply To", text="Apply To", anchor=W)
         my_tree.heading("Category", text="Category", anchor=W)
-        my_tree.heading("Bank Account", text="Bank Account", anchor=W)
 
         # Create Striped Row Tags
         my_tree.tag_configure('oddrow', background="white")

@@ -25,7 +25,7 @@ def date_changer(date, date_format=None):
 		return date
 
 class BankStatementRecon(Frame):
-	def __init__(self, parent, account_name, *args, **kwargs):
+	def __init__(self, parent, *args, **kwargs):
 		super().__init__(parent, *args, **kwargs)
 
 		# Add data to database
@@ -36,7 +36,7 @@ class BankStatementRecon(Frame):
 			# Create a cursor instance
 			c = conn.cursor()
 
-			c.execute(f"SELECT rowid, * FROM {account_name}")
+			c.execute("SELECT rowid, * FROM bankStatement")
 			records = c.fetchall()
 			
 			# Add our data to the screen
@@ -56,15 +56,6 @@ class BankStatementRecon(Frame):
 
 			# Close our connection
 			conn.close()
-
-		global refresh_page
-		def refresh_page():
-			# Clear Tree View
-			my_tree.delete(*my_tree.get_children())
-
-			# Get Info From Database
-			query_database()
-
 
 		# SETUP TREE VIEW
 		# Add Some Style
@@ -183,7 +174,7 @@ class BankStatementRecon(Frame):
 				else:
 					cat = get_cat
 
-				c.execute(f"INSERT INTO {account_name} VALUES (:date, :description, :amount, :category)",
+				c.execute("INSERT INTO bankStatement VALUES (:date, :description, :amount, :category)",
 					{
 						'date' : date_changer(dt_entry.get()),
 						'description' : des_entry.get(),
@@ -230,7 +221,7 @@ class BankStatementRecon(Frame):
 				else:
 					cat = cat_entry.get()
 
-				c.execute(f'''UPDATE {account_name} SET
+				c.execute('''UPDATE bankStatement SET
 					date = :date,
 					description = :description,
 					amount = :amount,
@@ -274,7 +265,7 @@ class BankStatementRecon(Frame):
 			# Create a cursor instance
 			c = conn.cursor()
 
-			c.execute(f"DELETE FROM {account_name} WHERE oid=" + id_entry.get())
+			c.execute("DELETE FROM bankStatement WHERE oid=" + id_entry.get())
 
 			# Commit changes
 			conn.commit()
@@ -306,7 +297,7 @@ class BankStatementRecon(Frame):
 				# Create a cursor instance
 				c = conn.cursor()
 
-				c.execute(f"DROP TABLE {account_name}")
+				c.execute("DROP TABLE bankStatement")
 
 				# Commit changes
 				conn.commit()
@@ -368,12 +359,9 @@ class BankStatementRecon(Frame):
 				appliedTo = des_entry.get()
 				category = cat_entry.get()
 
-				cr.auto_add_rule(rule_name, appliedTo, category, account_name)
+				cr.auto_add_rule(rule_name, appliedTo, category)
 
 				cr.auto_apply_rules()
-
-				# Refresh Category Rules
-				cr.refresh_cr()
 
 				# Clear Tree View
 				my_tree.delete(*my_tree.get_children())
@@ -387,7 +375,7 @@ class BankStatementRecon(Frame):
 
 		def add_statements():
 			# function to import bankstatements
-			add_bank_statement(account_name)
+			add_bank_statement()
 			
 			# Refresh page
 			query_database()  

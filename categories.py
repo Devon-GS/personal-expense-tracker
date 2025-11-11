@@ -1,4 +1,3 @@
-from logging import raiseExceptions
 import sqlite3
 from tkinter import *
 from tkinter import ttk

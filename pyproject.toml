@@ -1,0 +1,22 @@
+[project]
+name = "personal-expense-tracker"
+version = "3.2.0-alpha"
+description = "The Personal Expense Tracker, a simple yet powerful tool to manage your personal income and expenditure. Built with Python 3 and the Tkinter module, this application provides a user-friendly interface to handle all your transactions seamlessly."
+authors = [
+    {name = "Devon",email = "ds.pydev@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dateutil (>=2.9.0.post0,<3.0.0)",
+    "pandas (>=2.3.3,<3.0.0)",
+    "ofxtools (>=0.9.5,<0.10.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

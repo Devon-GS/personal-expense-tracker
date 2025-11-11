@@ -23,7 +23,11 @@ Follow these steps to get the Personal Expense Tracker up and running:
 3. **Install Dependencies:**
    - Ensure all required dependencies are installed. You may use:
    ```bash
-   pip install -r requirements.txt
+   python -m venv virt
+
+   pip install poetry
+
+   poetry install
    ```
 
 ## Features & Usage
