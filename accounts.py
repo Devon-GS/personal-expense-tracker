@@ -4,6 +4,86 @@ from tkinter import *
 from tkinter import ttk
 
 
+def query_database():
+	conn = sqlite3.connect('database.db')
+	c = conn.cursor()
+
+	c.execute("SELECT amount, category FROM bankStatement")
+	bank_records = c.fetchall()
+
+	c.execute("SELECT * FROM category")
+	cat_records = c.fetchall()
+
+	# Commit changes
+	conn.commit()
+	conn.close()
+
+	# Sort Category and Amounts
+	if len(bank_records) > 0:
+		cat_total = {}
+
+		# Add from category
+		for x in cat_records:
+			cat = x[0]
+			budget = x[1]
+
+			if "Please Select" not in cat_total.keys():
+				cat_total["Please Select"] = [0.0]  
+				cat_total["Please Select"].append('None')
+
+			elif cat not in cat_total.keys():
+				cat_total[cat] = [0.0]  
+				cat_total[cat].append(budget)
+
+		# Add from bankstatements
+		for x in bank_records:
+			amount = x[0]
+			cat = x[1]
+
+			cat_total[cat][0] += float(amount)
+		
+		# # Change name and order dict
+		cat_total['Uncategorised'] = cat_total.pop('Please Select')
+
+		cat_total_sorted = dict(sorted(cat_total.items()))
+
+		return cat_total_sorted
+		
+def accounts_build():
+	# Get data from database
+	database = query_database()
+
+	if database != None:
+		# add data to tree
+		global count
+		count = 0
+		for key, value in database.items():
+			amount = value[0]
+			budget = value[1]
+
+			# Format amount
+			if amount < 0.0:
+				amount = "{:.2f}".format(amount*-1,)
+
+			# Check over/under/near
+			if budget == 'None':
+				budget = '-'
+				over_under = '-'
+			# elif amt >= (float(bud) - float(2000)) or amt <= bud:
+				# if with in certain percent of budget
+			elif float(amount) < float(budget):
+				over_under = 'Within'
+			else:
+				over_under = 'OVER'
+
+			# Display Data In Table
+			if count % 2 == 0:
+				my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(amount), 2), budget, over_under), tags=('evenrow',))
+			else:
+				my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(amount), 2), budget, over_under), tags=('oddrow',))
+			# increment counter
+			count += 1
+
 class Accounts(Frame):
 	def __init__(self, parent, *args, **kwargs):
 		super().__init__(parent, *args, **kwargs)
@@ -39,8 +119,6 @@ class Accounts(Frame):
 		my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
 		my_tree.pack()
 
-		my_tree.delete(*my_tree.get_children())
-
 		# Configure the Scrollbar
 		tree_scroll.config(command=my_tree.yview)
 
@@ -65,85 +143,11 @@ class Accounts(Frame):
 		my_tree.tag_configure('oddrow', background="white")
 		my_tree.tag_configure('evenrow', background="lightblue")
 
-	def query_database(self):
-		conn = sqlite3.connect('database.db')
-		c = conn.cursor()
-
-		c.execute("SELECT amount, category FROM bankStatement")
-		bank_records = c.fetchall()
-
-		c.execute("SELECT * FROM category")
-		cat_records = c.fetchall()
-
-		# Commit changes
-		conn.commit()
-		conn.close()
-
-		# Sort Category and Amounts
-		if len(bank_records) > 0:
-			cat_total = {}
-
-			# Add from category
-			for x in cat_records:
-				cat = x[0]
-				budget = x[1]
-
-				if "Please Select" not in cat_total.keys():
-					cat_total["Please Select"] = [0.0]  
-					cat_total["Please Select"].append('None')
-
-				elif cat not in cat_total.keys():
-					cat_total[cat] = [0.0]  
-					cat_total[cat].append(budget)
-
-			# Add from bankstatements
-			for x in bank_records:
-				amount = x[0]
-				cat = x[1]
-
-				cat_total[cat][0] += float(amount)
-			
-			# # Change name and order dict
-			cat_total['Uncategorised'] = cat_total.pop('Please Select')
-
-			cat_total_sorted = dict(sorted(cat_total.items()))
-
-			return cat_total_sorted
-
-	def accounts_build(self):
-		# Get data from database
-		database = self.query_database()
-
-		# add data to tree
-		global count
-		count = 0
-		for key, value in database.items():
-			amount = value[0]
-			budget = value[1]
-
-			# Format amount
-			if amount < 0.0:
-				amount = "{:.2f}".format(amount*-1,)
-
-			# Check over/under/near
-			if budget == 'None':
-				budget = '-'
-				over_under = '-'
-			# elif amt >= (float(bud) - float(2000)) or amt <= bud:
-				# if with in certain percent of budget
-			elif float(amount) < float(budget):
-				over_under = 'Within'
-			else:
-				over_under = 'OVER'
-
-			# Display Data In Table
-			if count % 2 == 0:
-				my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(amount), 2), budget, over_under), tags=('evenrow',))
-			else:
-				my_tree.insert(parent='', index='end', iid=count, text='', values=(key, round(float(amount), 2), budget, over_under), tags=('oddrow',))
-			# increment counter
-			count += 1
+		# Build tree
+		accounts_build()
 
 	def refresh(self):
 		my_tree.delete(*my_tree.get_children())
-		self.accounts_build()
+		accounts_build()
+
+	

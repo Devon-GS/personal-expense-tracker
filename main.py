@@ -26,9 +26,6 @@ tab3 = CategoryRules(notebook)
 tab4 = Accounts(notebook)
 tab5 = BankStatementRecon(notebook)
 
-# Load info to tab
-tab4.accounts_build()
-
 # Add tab to notebook
 notebook.add(tab1, text="Options")
 notebook.add(tab2, text="Categories")
@@ -56,8 +53,11 @@ def update(event):
 	# selected_tab = event.widget
 	# print(selected_tab)
 
+	if selected_tab == 2:
+		tab3.refresh_cat_rules()
+
 	if selected_tab == 3:
-	    tab4.refresh()
+		tab4.refresh()
 
 notebook.bind("<<NotebookTabChanged>>", update)
 
