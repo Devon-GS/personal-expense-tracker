@@ -24,14 +24,14 @@ tab1 = Options(notebook)
 tab2 = Categories(notebook)
 tab3 = CategoryRules(notebook)
 tab4 = Accounts(notebook)
-tab5 = BankStatementRecon(notebook)
+# tab5 = BankStatementRecon(notebook)
 
 # Add tab to notebook
 notebook.add(tab1, text="Options")
 notebook.add(tab2, text="Categories")
 notebook.add(tab3, text="Category Rules")
 notebook.add(tab4, text="Category Amounts")
-notebook.add(tab5, text="Bank Statement Recon")
+# notebook.add(tab5, text="Bank Statement Recon")
 
 
 # Add multiple bank account [upcoming feature]
