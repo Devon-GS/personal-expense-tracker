@@ -14,7 +14,7 @@ class Options(Frame):
 		indata.init_database()
 
 		# SORT RULES
-		auto_apply_rules()
+		# auto_apply_rules()
 
 		# SELECT OPTIONS
 		# SETUP
@@ -277,33 +277,53 @@ class Options(Frame):
 			conn.close()
 
 		def add_button():
-			# Connect to database    
-			con = sqlite3.connect('database.db')
-			c = con.cursor()
+			try:
+				# Connect to database    
+				con = sqlite3.connect('database.db')
+				c = con.cursor()
 
-			# Create Bank Statement Table
-			c.execute(''' CREATE TABLE IF NOT EXISTS bankAccountNames (Account TEXT)''')
+				# Get bank account name
+				get_name = name_entry.get()
 
+				# Check name lenth
+				if len(get_name) > 25:
+					raise Exception("Name longer than 25 characters")
 
-			# Notes 
-				# sanitise name to match format wordOneTwo
+				# Put name in camelCase
+				name = get_name.lower().split()
+				bank_acc_name = ''
+				for x in range(0, len(name)):
+					if x == 0:
+						bank_acc_name += name[x]
+					else:
+						bank_acc_name += name[x].capitalize()
+				
+				c.execute("INSERT INTO bankAccountNames VALUES (:account)", {'account' : bank_acc_name})
 
-			c.execute("INSERT INTO bankAccountNames VALUES (:account)", {'account' : name_entry.get()})
+				# Create Bank Statement Table
+				c.execute(f''' CREATE TABLE IF NOT EXISTS {bank_acc_name} (
+						date TEXT,
+						description TEXT,
+						amount TEXT,
+						category TEXT
+					)
+				''')
 			
-			con.commit()
-			con.close()
+				con.commit()
+				con.close()
 
-			# Clear entry
-			name_entry.delete(0, END)
+				# Clear entry
+				name_entry.delete(0, END)
 
-			# Reload tree
-			my_tree.delete(*my_tree.get_children())
-			query_database()
+				# Reload tree
+				my_tree.delete(*my_tree.get_children())
+				query_database()
+			except Exception as error:
+				messagebox.showerror('ERROR', error)
+
 
 		def remove_button():
 			pass
-
-
 
 		# SETUP ENTRY BOXES AND BUTTONS
 		# Add Record Entry Box
@@ -319,7 +339,7 @@ class Options(Frame):
 		add_button = Button(data_frame, text="Add", command=add_button)
 		add_button.grid(row=2, column=0, columnspan=2, sticky=NSEW, padx=10, pady=10)
 
-		remove_button = Button(data_frame, text="Remove", command='ff')
+		remove_button = Button(data_frame, text="Remove", command=remove_button)
 		remove_button.grid(row=3, column=0, columnspan=2, sticky=NSEW, padx=10, pady=10)
 
 		# Run setup functions

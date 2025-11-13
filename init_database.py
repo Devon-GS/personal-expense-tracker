@@ -50,5 +50,8 @@ def init_database(reinit=None):
 		if reinit != 'reinit':
 			c.execute("INSERT INTO ofxCsv VALUES (:id, :selected)", {'id': 0, 'selected' : 0})
 
+		# Create bank account table
+		c.execute("CREATE TABLE IF NOT EXISTS bankAccountNames (account TEXT)")
+
 		con.commit()
 		con.close()

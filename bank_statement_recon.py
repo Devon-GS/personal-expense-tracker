@@ -25,18 +25,20 @@ def date_changer(date, date_format=None):
 		return date
 
 class BankStatementRecon(Frame):
-	def __init__(self, parent, *args, **kwargs):
+	def __init__(self, parent, account_name, *args, **kwargs):
 		super().__init__(parent, *args, **kwargs)
 
 		# Add data to database
-		def query_database():
+		global query_database
+		def query_database(account_name):
+
 			# Create a database or connect to one that exists
 			conn = sqlite3.connect('database.db')
 
 			# Create a cursor instance
 			c = conn.cursor()
 
-			c.execute("SELECT rowid, * FROM bankStatement")
+			c.execute(f"SELECT rowid, * FROM {account_name}")
 			records = c.fetchall()
 			
 			# Add our data to the screen
@@ -84,6 +86,7 @@ class BankStatementRecon(Frame):
 		tree_scroll.pack(side=RIGHT, fill=Y)
 
 		# Create The Treeview
+		global my_tree
 		my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
 		my_tree.pack()
 
@@ -174,7 +177,7 @@ class BankStatementRecon(Frame):
 				else:
 					cat = get_cat
 
-				c.execute("INSERT INTO bankStatement VALUES (:date, :description, :amount, :category)",
+				c.execute(f"INSERT INTO {account_name} VALUES (:date, :description, :amount, :category)",
 					{
 						'date' : date_changer(dt_entry.get()),
 						'description' : des_entry.get(),
@@ -198,7 +201,7 @@ class BankStatementRecon(Frame):
 				my_tree.delete(*my_tree.get_children())
 
 				# Get data from database again
-				query_database()
+				query_database(account_name)
 			except Exception as error:
 				messagebox.showerror('ERROR', error)
 
@@ -221,7 +224,7 @@ class BankStatementRecon(Frame):
 				else:
 					cat = cat_entry.get()
 
-				c.execute('''UPDATE bankStatement SET
+				c.execute(f'''UPDATE {account_name} SET
 					date = :date,
 					description = :description,
 					amount = :amount,
@@ -265,7 +268,7 @@ class BankStatementRecon(Frame):
 			# Create a cursor instance
 			c = conn.cursor()
 
-			c.execute("DELETE FROM bankStatement WHERE oid=" + id_entry.get())
+			c.execute(f"DELETE FROM {account_name} WHERE oid=" + id_entry.get())
 
 			# Commit changes
 			conn.commit()
@@ -297,7 +300,7 @@ class BankStatementRecon(Frame):
 				# Create a cursor instance
 				c = conn.cursor()
 
-				c.execute("DROP TABLE bankStatement")
+				c.execute(f"DROP TABLE {account_name}")
 
 				# Commit changes
 				conn.commit()
@@ -335,6 +338,8 @@ class BankStatementRecon(Frame):
 			selected = my_tree.focus()
 			# Grab record values
 			values = my_tree.item(selected, 'values')
+			print(values)
+			print(account_name)
 
 			# output to entry boxes
 			id_entry.insert(0, values[0])
@@ -361,12 +366,12 @@ class BankStatementRecon(Frame):
 
 				cr.auto_add_rule(rule_name, appliedTo, category)
 
-				cr.auto_apply_rules()
+				cr.auto_apply_rules(account_name)
 
 				# Clear Tree View
 				my_tree.delete(*my_tree.get_children())
 
-				query_database()
+				query_database(account_name)
 
 				top.destroy()
 
@@ -375,10 +380,10 @@ class BankStatementRecon(Frame):
 
 		def add_statements():
 			# function to import bankstatements
-			add_bank_statement()
+			add_bank_statement(account_name)
 			
 			# Refresh page
-			query_database()  
+			query_database(account_name)  
 
 
 		# Add Buttons
@@ -410,4 +415,10 @@ class BankStatementRecon(Frame):
 		my_tree.bind("<ButtonRelease-1>", select_record)
 
 		# Get data and disply
-		query_database()  
+		query_database(account_name) 
+		cr.auto_apply_rules(account_name) 
+	
+	def refresh(self, account):
+		# Clear Tree View
+		my_tree.delete(*my_tree.get_children())
+		query_database(account) 
