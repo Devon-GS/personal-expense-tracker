@@ -1,8 +1,13 @@
----
-
 # 📚 Personal Expense Tracker
 
 The **Personal Expense Tracker**, a simple yet powerful tool to manage your personal income and expenditure. Built with Python 3 and the Tkinter module, this application provides a user-friendly interface to handle all your transactions seamlessly.
+
+![Python](https://img.shields.io/badge/Python_3.x-blue?label=Python)
+![GUI](https://img.shields.io/badge/tkinter-green?label=GUI)
+![Database](https://img.shields.io/badge/SQLite-orange?label=Database)
+![License](https://img.shields.io/badge/MIT-brightgreen?label=License)
+
+---
 
 ## 🚀 Installation
 
