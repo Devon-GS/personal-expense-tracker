@@ -49,13 +49,18 @@ bank_list = []
 
 for x in records:
 	name = x[0]
+	tab_name = name
 	tab_name = BankStatementRecon(notebook, name)
 	notebook.add(tab_name, text=name)
 	bank_list.append(tab_name)
 
+# bank_list[0].show_data()
+# bank_list[1].show_data()
+
 # Update Categories tab
 def update(event):
 	selected_tab = event.widget.index('current')
+	selected_tab_name = notebook.tab(selected_tab, 'text')
 	# selected_tab = event.widget
 	# print(selected_tab)
 
@@ -65,9 +70,14 @@ def update(event):
 	if selected_tab == 3:
 		tab4.refresh()
 
-	if selected_tab > 3:
-		for x in range(0, len(bank_list)):
-			bank_list[x].refresh(records[x][0])
+	# if selected_tab > 3:
+	# 	for x in range(0, len(bank_list)):
+	# 		bank_list[x].refresh(records[x][0])
+
+	# if selected_tab > 3:
+	# 	for x in dir(bank_list[0]):
+	# 		print(x)
+
 			
 
 notebook.bind("<<NotebookTabChanged>>", update)
