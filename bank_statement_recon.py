@@ -379,13 +379,10 @@ class BankStatementRecon(Frame):
 
 		def add_statements():
 			# function to import bankstatements
-			print(self.my_tree)
-			print(account_name)
 			add_bank_statement(account_name)
 			
 			# Refresh page
 			query_database(account_name)  
-
 
 		# Add Buttons
 		button_frame = LabelFrame(self, text="Commands")
@@ -422,6 +419,4 @@ class BankStatementRecon(Frame):
 	def refresh(self):
 		# Clear Tree View
 		self.my_tree.delete(*self.my_tree.get_children())
-		# query_database(account_name) 
-
-	
+		# query_database(account_name) 	
