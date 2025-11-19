@@ -301,6 +301,10 @@ class BankStatementRecon(Frame):
 				c = conn.cursor()
 
 				c.execute(f"DROP TABLE {account_name}")
+				c.execute(f"DELETE FROM bankAccountNames WHERE account = ?", (account_name,))
+							# ##########################
+							# WORKING
+							# ##########################
 
 				# Commit changes
 				conn.commit()
