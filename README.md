@@ -17,7 +17,7 @@ Download here [**Latest Release**](https://github.com/Devon-GS/personal-expense-
 
 or
 
-Intall using git clone:
+Install using git clone:
 
 1. **Clone the Repository:**
    ```bash
