@@ -286,7 +286,9 @@ class Options(Frame):
 				get_name = name_entry.get()
 
 				# Check name lenth
-				if len(get_name) > 25:
+				if get_name == '':
+					raise Exception("Name cannot be blank")
+				elif len(get_name) > 25:
 					raise Exception("Name longer than 25 characters")
 
 				# Put name in camelCase
