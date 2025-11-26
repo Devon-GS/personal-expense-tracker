@@ -285,7 +285,7 @@ class BankStatementRecon(Frame):
 		# Remove all records
 		def remove_all():
 			# Messagebox Warning
-			messagebox.showwarning('Delete Detected', 'YOU ARE ABOUT TO DELETE ALL RECORDS')
+			messagebox.showwarning('Delete Detected', 'YOU ARE ABOUT TO DELETE ALL RECORDS AND REMOVE BANK ACCOUNT')
 
 			response = messagebox.askyesno('Delete Detected', 'Are you sure you want to delete ALL RECORDS?')
 
@@ -302,21 +302,16 @@ class BankStatementRecon(Frame):
 
 				c.execute(f"DROP TABLE {account_name}")
 				c.execute(f"DELETE FROM bankAccountNames WHERE account = ?", (account_name,))
-							# ##########################
-							# WORKING
-							# ##########################
 
 				# Commit changes
 				conn.commit()
-
-				# Close our connection
 				conn.close()
-
-				# Clear the entry boxes
-				clear_entries()
 
 				# Add back table to database
 				indata.init_database('reinit')
+				
+				# Destroy tab
+				Frame.destroy(self)
 
 		# Clear entry boxes
 		def clear_entries():

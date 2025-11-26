@@ -258,6 +258,7 @@ class Options(Frame):
 		my_tree.tag_configure('evenrow', background="lightblue")
 
 		# FUNCTIONS
+		global query_database
 		def query_database():
 			# Create a database or connect to one that exists
 			conn = sqlite3.connect('database.db')
@@ -334,9 +335,8 @@ class Options(Frame):
 			except Exception as error:
 				messagebox.showerror('ERROR', error)
 
-
-		def remove_button():
-			pass
+		# def remove_button():
+		# 	pass
 
 		# SETUP ENTRY BOXES AND BUTTONS
 		# Add Record Entry Box
@@ -352,12 +352,16 @@ class Options(Frame):
 		add_button = Button(data_frame, text="Add", command=add_button)
 		add_button.grid(row=2, column=0, columnspan=2, sticky=NSEW, padx=10, pady=10)
 
-		remove_button = Button(data_frame, text="Remove", command=remove_button)
-		remove_button.grid(row=3, column=0, columnspan=2, sticky=NSEW, padx=10, pady=10)
+		# remove_button = Button(data_frame, text="Remove", command=remove_button)
+		# remove_button.grid(row=3, column=0, columnspan=2, sticky=NSEW, padx=10, pady=10)
 
 		# Run setup functions
 		display_entry()
 		display_choice()
+		query_database()
+
+	def refresh(self):
+		my_tree.delete(*my_tree.get_children())
 		query_database()
 
 
@@ -429,6 +433,9 @@ def update(event):
 	# selected_tab = event.widget
 	# print(selected_tab)
 
+	if selected_tab == 0:
+		tab1.refresh()
+
 	if selected_tab == 2:
 		tab3.refresh_cat_rules()
 
@@ -450,8 +457,6 @@ add_banks()
 
 # Start the Tkinter event loop
 root.mainloop()
-
-
 
 # #################################################################################################################
 #  OLD MAIN APP V3.1.0-Alpha
@@ -506,4 +511,3 @@ root.mainloop()
 # app = App()
 # app.geometry("1000x500")
 # app.mainloop()
-
