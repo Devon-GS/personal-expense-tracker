@@ -13,6 +13,12 @@ The **Personal Expense Tracker**, a simple yet powerful tool to manage your pers
 
 Follow these steps to get the Personal Expense Tracker up and running:
 
+Download here [**Latest Release**](github.com)
+
+or
+
+Intall useing git clone:
+
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/Devon-GS/personal-expense-tracker.git
