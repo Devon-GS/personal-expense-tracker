@@ -391,11 +391,14 @@ notebook.add(tab2, text="Categories")
 notebook.add(tab3, text="Category Rules")
 notebook.add(tab4, text="Category Amounts")
 
-# Add multiple bank account [upcoming feature]
-# Get bank acount names from database
-
+# ##########################################
+# Add multiple bank accounts
+# ##########################################
 # List of already added bank accounts
 bank_acc_created = []
+
+# Create new bank acount tabs
+bank_instance = {}
 
 def add_banks():
 	conn = sqlite3.connect('database.db')
@@ -407,9 +410,7 @@ def add_banks():
 	conn.commit()
 	conn.close()
 
-	# Create new bank acount tabs
-	bank_list = []
-
+	# Loop thhrough and create bankaccount tabs
 	for x in records:
 		name = x[0]
 
@@ -421,11 +422,11 @@ def add_banks():
 			tab_name = name
 			tab_name = BankStatementRecon(notebook, name)
 			notebook.add(tab_name, text=name)
-			bank_list.append(tab_name)
+			bank_instance[name] = tab_name
 
-	# bank_list[0].show_data()
-	# bank_list[1].show_data()
-
+# ##########################################
+# Update tabs
+# ##########################################
 # Update Categories tab
 def update(event):
 	selected_tab = event.widget.index('current')
@@ -442,13 +443,8 @@ def update(event):
 	if selected_tab == 3:
 		tab4.refresh()
 
-	# if selected_tab > 3:
-	# 	for x in range(0, len(bank_list)):
-	# 		bank_list[x].refresh(records[x][0])
-
-	# if selected_tab > 3:
-	# 	for x in dir(bank_list[0]):
-	# 		print(x)
+	if selected_tab > 3:
+		bank_instance[selected_tab_name].refresh() 
 
 notebook.bind("<<NotebookTabChanged>>", update)
 
@@ -457,6 +453,16 @@ add_banks()
 
 # Start the Tkinter event loop
 root.mainloop()
+
+
+
+
+
+
+
+
+
+
 
 # #################################################################################################################
 #  OLD MAIN APP V3.1.0-Alpha

@@ -23,40 +23,53 @@ def date_changer(date, date_format=None):
 			return parser.parse(date).strftime('%Y%m%d')
 	except OverflowError:
 		return date
+	
+# Add data to database
+def query_database(account_name):
+	# Create a database or connect to one that exists
+	conn = sqlite3.connect('database.db')
+
+	# Create a cursor instance
+	c = conn.cursor()
+
+	c.execute(f"SELECT rowid, * FROM {account_name}")
+	records = c.fetchall()
+
+	# Commit changes
+	conn.commit()
+	conn.close()
+
+	return records
+	
 
 class BankStatementRecon(Frame):
+	# #####################################################################
+	# BUILDER FOR TREE
+	# #####################################################################
+	# Add our data to the screen
+	def builder(self, account_name):
+		records = query_database(account_name)
+		
+		self.my_tree.delete(*self.my_tree.get_children())
+
+		global count
+		count = 0
+
+		for record in records:
+			if count % 2 == 0:
+				self.my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], date_changer(record[1],'display'), record[2], record[3], record[4]), tags=('evenrow',))
+			else:
+				self.my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], date_changer(record[1],'display'), record[2], record[3], record[4]), tags=('oddrow',))
+			# increment counter
+			count += 1
+	
+	# #####################################################################
+	# INIT CLASS
+	# #####################################################################
 	def __init__(self, parent, account_name, *args, **kwargs):
 		super().__init__(parent, *args, **kwargs)
 
-		# Add data to database
-		# global query_database
-		def query_database(account_name):
-			# Create a database or connect to one that exists
-			conn = sqlite3.connect('database.db')
-
-			# Create a cursor instance
-			c = conn.cursor()
-
-			c.execute(f"SELECT rowid, * FROM {account_name}")
-			records = c.fetchall()
-			
-			# Add our data to the screen
-			global count
-			count = 0
-
-			for record in records:
-				if count % 2 == 0:
-					self.my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], date_changer(record[1],'display'), record[2], record[3], record[4]), tags=('evenrow',))
-				else:
-					self.my_tree.insert(parent='', index='end', iid=count, text='', values=(record[0], date_changer(record[1],'display'), record[2], record[3], record[4]), tags=('oddrow',))
-				# increment counter
-				count += 1
-
-			# Commit changes
-			conn.commit()
-
-			# Close our connection
-			conn.close()
+		self.bank = account_name
 
 		# SETUP TREE VIEW
 		# Add Some Style
@@ -79,13 +92,12 @@ class BankStatementRecon(Frame):
 		# Create a Treeview Frame
 		tree_frame = Frame(self)
 		tree_frame.pack(pady=10)
-
+	
 		# Create a Treeview Scrollbar
 		self.tree_scroll = Scrollbar(tree_frame)
 		self.tree_scroll.pack(side=RIGHT, fill=Y)
 
 		# Create The Treeview
-		# global my_tree
 		self.my_tree = ttk.Treeview(tree_frame, yscrollcommand=self.tree_scroll.set, selectmode="extended")
 		self.my_tree.pack()
 
@@ -152,7 +164,9 @@ class BankStatementRecon(Frame):
 		cat_entry = ttk.Combobox(data_frame, width = 18, textvariable = n, postcommand=update_combobox_options) 
 		cat_entry.grid(row=1, column=1, padx=10, pady=10)
 
+		# #####################################################################
 		# FUNCTIONS FOR BUTTONS
+		# #####################################################################
 		def add_record():
 			# Create a database or connect to one that exists
 			conn = sqlite3.connect('database.db')
@@ -200,7 +214,7 @@ class BankStatementRecon(Frame):
 				self.my_tree.delete(*self.my_tree.get_children())
 
 				# Get data from database again
-				query_database(account_name)
+				self.builder(account_name)
 			except Exception as error:
 				messagebox.showerror('ERROR', error)
 
@@ -368,8 +382,9 @@ class BankStatementRecon(Frame):
 
 				# Clear Tree View
 				self.my_tree.delete(*self.my_tree.get_children())
-
-				query_database(account_name)
+				
+				# query_database(account_name)
+				self.builder(account_name)
 
 				top.destroy()
 
@@ -381,7 +396,7 @@ class BankStatementRecon(Frame):
 			add_bank_statement(account_name)
 			
 			# Refresh page
-			query_database(account_name)  
+			self.builder(account_name)  
 
 		# Add Buttons
 		button_frame = LabelFrame(self, text="Commands")
@@ -411,11 +426,17 @@ class BankStatementRecon(Frame):
 		# Bind the treeview
 		self.my_tree.bind("<ButtonRelease-1>", select_record)
 
-		# Get data and disply
-		query_database(account_name) 
+		# # Get data and disply
+		self.builder(account_name) 
 		cr.auto_apply_rules(account_name) 
-	
+
+	# #####################################################################
+	# REFRESH ON TAB CHANGE
+	# #####################################################################
 	def refresh(self):
+		# Apply Rules
+		cr.auto_apply_rules(self.bank)
 		# Clear Tree View
 		self.my_tree.delete(*self.my_tree.get_children())
-		# query_database(account_name) 	
+		# Refresh tree 
+		self.builder(self.bank)
