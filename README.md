@@ -25,13 +25,7 @@ Install using git clone:
    cd Personal-Expense-Tracker
    ```
 
-2. **Run the Application:**
-   - Execute `main.py` in your project directory.
-   ```bash
-   python main.py
-   ```
-
-3. **Install Dependencies:**
+2. **Install Dependencies:**
    - Ensure all required dependencies are installed. You may use:
    ```bash
    python -m venv virt
@@ -39,6 +33,12 @@ Install using git clone:
    pip install poetry
 
    poetry install
+   ```
+
+3. **Run the Application:**
+   - Execute `main.py` in your project directory.
+   ```bash
+   python main.py
    ```
 
 ## Features & Usage
