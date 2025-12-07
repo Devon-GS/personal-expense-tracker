@@ -58,16 +58,16 @@ Install using git clone:
 5. **Budgeting** 
    - Be able to create budget for accounts and warning when near and over the budget for the account.
 
+6. **Multiple Bank Accounts [Currently Testing]** 
+   - Ability to have multiple bank accounts eg.(Current, Credit Card, Savings, etc).
+
 ## Features We Want To Implement 
 
-6. **Search Transactions** 
+7. **Search Transactions** 
    - Be able to search for transactions.
 
-7. **Graphs** 
+8. **Graphs** 
    - Visual representation of incomes and expenditures.
-
-8. **Multiple Bank Accounts [Currently Testing]** 
-   - Ability to have multiple bank accounts eg.(Current, Credit Card, Savings, etc).
 
 ## 📖 Introduction
 
