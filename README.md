@@ -1,12 +1,23 @@
----
-
 # 📚 Personal Expense Tracker
 
 The **Personal Expense Tracker**, a simple yet powerful tool to manage your personal income and expenditure. Built with Python 3 and the Tkinter module, this application provides a user-friendly interface to handle all your transactions seamlessly.
 
+![Python](https://img.shields.io/badge/Python_3.x-blue?label=Python)
+![GUI](https://img.shields.io/badge/tkinter-green?label=GUI)
+![Database](https://img.shields.io/badge/SQLite-orange?label=Database)
+![License](https://img.shields.io/badge/MIT-brightgreen?label=License)
+
+---
+
 ## 🚀 Installation
 
 Follow these steps to get the Personal Expense Tracker up and running:
+
+Download here [**Latest Release**](https://github.com/Devon-GS/personal-expense-tracker/releases/latest)
+
+or
+
+Install using git clone:
 
 1. **Clone the Repository:**
    ```bash
@@ -14,13 +25,7 @@ Follow these steps to get the Personal Expense Tracker up and running:
    cd Personal-Expense-Tracker
    ```
 
-2. **Run the Application:**
-   - Execute `main.py` in your project directory.
-   ```bash
-   python main.py
-   ```
-
-3. **Install Dependencies:**
+2. **Install Dependencies:**
    - Ensure all required dependencies are installed. You may use:
    ```bash
    python -m venv virt
@@ -28,6 +33,12 @@ Follow these steps to get the Personal Expense Tracker up and running:
    pip install poetry
 
    poetry install
+   ```
+
+3. **Run the Application:**
+   - Execute `main.py` in your project directory.
+   ```bash
+   python main.py
    ```
 
 ## Features & Usage
@@ -55,7 +66,7 @@ Follow these steps to get the Personal Expense Tracker up and running:
 7. **Graphs** 
    - Visual representation of incomes and expenditures.
 
-8. **Multiple Bank Accounts** 
+8. **Multiple Bank Accounts [Currently Testing]** 
    - Ability to have multiple bank accounts eg.(Current, Credit Card, Savings, etc).
 
 ## 📖 Introduction

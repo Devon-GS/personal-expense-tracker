@@ -6,7 +6,7 @@ import categories as c
 import init_database as indata
 
 
-def auto_apply_rules():
+def auto_apply_rules(account_name):
 	cr_list = []
 	bs_list = []
 	conn = sqlite3.connect('database.db')
@@ -15,7 +15,7 @@ def auto_apply_rules():
 	c.execute("SELECT appliedTo, category FROM categoryRules")
 	cr_records = c.fetchall()
 
-	c.execute("SELECT description, category FROM bankStatement")
+	c.execute(f"SELECT description, category FROM {account_name}")
 	bs_records = c.fetchall()
 
 	# Add to lists
@@ -29,11 +29,11 @@ def auto_apply_rules():
 	for bs in bs_list:
 		for cr in cr_list:
 			if bs[1] == 'Delete':
-				query = ("DELETE FROM bankStatement WHERE description = ?")
+				query = (f"DELETE FROM {account_name} WHERE description = ?")
 				c.execute(query, (bs[0],))
 	
 			elif cr[0] == bs[0] and bs[1] == 'Please Select':
-				query = ("UPDATE bankStatement SET category = ? WHERE description = ?")
+				query = (f"UPDATE {account_name} SET category = ? WHERE description = ?")
 
 				c.execute(query, (cr[1], bs[0]))
 				

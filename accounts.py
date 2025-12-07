@@ -8,9 +8,19 @@ def query_database():
 	conn = sqlite3.connect('database.db')
 	c = conn.cursor()
 
-	c.execute("SELECT amount, category FROM bankStatement")
-	bank_records = c.fetchall()
+	# Get all transactions from bank account tables
+	c.execute("SELECT account FROM bankAccountNames")
+	bank_acc_names = c.fetchall()
 
+	all_bank_records = []
+	for acc_name in bank_acc_names:
+		c.execute(f'SELECT amount, category FROM {acc_name[0]}')
+		bank_records = c.fetchall()
+
+		for rec in bank_records:
+			all_bank_records.append(rec)	
+
+	# Get all categories from category table
 	c.execute("SELECT * FROM category")
 	cat_records = c.fetchall()
 
@@ -19,10 +29,10 @@ def query_database():
 	conn.close()
 
 	# Sort Category and Amounts
-	if len(bank_records) > 0:
+	if len(all_bank_records) > 0:
 		cat_total = {}
 
-		# Add from category
+		# Add categories from category table to cat_total dic
 		for x in cat_records:
 			cat = x[0]
 			budget = x[1]
@@ -31,24 +41,27 @@ def query_database():
 				cat_total["Please Select"] = [0.0]  
 				cat_total["Please Select"].append('None')
 
-			elif cat not in cat_total.keys():
+			if cat not in cat_total.keys():
 				cat_total[cat] = [0.0]  
 				cat_total[cat].append(budget)
 
-		# Add from bankstatements
-		for x in bank_records:
+		# Add transactions from bankstatements to cat_total dic
+		for x in all_bank_records:
 			amount = x[0]
 			cat = x[1]
 
-			cat_total[cat][0] += float(amount)
+			if cat == "Please Select":
+				cat_total[cat][0] += abs(float(amount))
+			else:
+				cat_total[cat][0] += float(amount)
 		
-		# # Change name and order dict
+		# Change name and order dict
 		cat_total['Uncategorised'] = cat_total.pop('Please Select')
 
 		cat_total_sorted = dict(sorted(cat_total.items()))
 
 		return cat_total_sorted
-		
+	
 def accounts_build():
 	# Get data from database
 	database = query_database()
@@ -149,5 +162,3 @@ class Accounts(Frame):
 	def refresh(self):
 		my_tree.delete(*my_tree.get_children())
 		accounts_build()
-
-	
