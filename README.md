@@ -1,8 +1,8 @@
 > ### ⚠️ NOTICE: Project Moved & Sunsetted
 > **This project is no longer being actively developed.** 
 > 
-> It has been significantly upgraded and evolved into a full-scale small business >accounting program.\
-As part of this transition, the source code has been moved to a **private repository** >for commercial development.\
+> It has been significantly upgraded and evolved into a full-scale small business accounting program.\
+As part of this transition, the source code has been moved to a **private repository** for commercial development.\
 The code in this repository remains available for historical reference only.
 
 # 📚 Personal Expense Tracker
