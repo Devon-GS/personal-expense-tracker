@@ -1,3 +1,10 @@
+> ### ⚠️ NOTICE: Project Moved & Sunsetted
+> **This project is no longer being actively developed.** 
+> 
+> It has been significantly upgraded and evolved into a full-scale small business >accounting program.\
+> As part of this transition, the source code has been moved to a **private repository** >for commercial development.\
+> The code in this repository remains available for historical reference only.
+
 # 📚 Personal Expense Tracker
 
 The **Personal Expense Tracker**, a simple yet powerful tool to manage your personal income and expenditure. Built with Python 3 and the Tkinter module, this application provides a user-friendly interface to handle all your transactions seamlessly.
